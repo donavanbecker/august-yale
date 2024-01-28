@@ -1,0 +1,65 @@
+{
+  "name": "august-yale",
+  "version": "0.1.0",
+  "description": "API module for interacting with and receiving events from August smart locks",
+  "homepage": "https://github.com/donavanbecker/august-yale#readme",
+  "author": {
+    "name": "donavanbecker",
+    "url": "https://github.com/donavanbecker"
+  },
+  "contributors": [
+    {
+      "name": "donavanbecker",
+      "url": "https://github.com/donavanbecker"
+    }
+  ],
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/donavanbecker/august-yale.git"
+  },
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/donavanbecker/august-yale/issues"
+  },
+  "engines": {
+    "node": "^18 || ^20"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "check": "npm install && npm outdated",
+    "update": "ncu -u && npm update && npm install",
+    "lint": "eslint src/**.ts",
+    "build": "rimraf ./dist && tsc",
+    "prepublishOnly": "npm run lint && npm run build",
+    "postpublish": "npm run clean",
+    "clean": "rimraf ./dist",
+    "test": "eslint src/**.ts"
+  },
+  "funding": [
+    {
+      "type": "Paypal - donavanbecker",
+      "url": "https://paypal.me/donavanbecker"
+    },
+    {
+      "type": "GitHub - donavanbecker",
+      "url": "https://github.com/sponsors/donavanbecker"
+    }
+  ],
+  "dependencies": {
+    "pubnub": "^7.5.0",
+    "tiny-json-http": "^7.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.10",
+    "@types/pubnub": "^7.4.1",
+    "@types/tiny-json-http": "^7.3.4",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "eslint": "^8.56.0",
+    "npm-check-updates": "^16.14.14",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

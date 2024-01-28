@@ -1,0 +1,81 @@
+name: Bug-Report
+description: Report a Bug to help us improve
+title: "Bug: "
+labels: [bug]
+assignees:
+  - donavanbecker
+  - mantorok1
+body:
+  - type: markdown
+    attributes:
+      value: |
+        You must use the issue template below when submitting a bug.
+  - type: input
+    attributes:
+      label: Describe The Bug
+      placeholder: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: To Reproduce
+      placeholder: Steps to reproduce the behavior.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Expected behavior
+      placeholder: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: Logs
+    attributes:
+      label: Relevant log output
+      placeholder: Bug reports that do not contain logs may be closed without warning. Show the RainBird logs here. Remove any sensitive information. Please Turn on Debug Mode before submitting your Issue so more logs can be shared to fix the issue being submitted.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: Config
+    attributes:
+      label: Config for RainBird
+      placeholder: Paste your RainBird config.json here. Remove any sensitive information, such as your RainBird device ipaddress or device password.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: If applicable add screenshots to help explain your problem.
+      placeholder: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+    validations:
+      required: false
+  - type: input
+    attributes:
+      label: Device & Model
+      placeholder: If applicable, add screenshots to help explain your problem.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        Environment
+  - type: input
+    attributes:
+      label: Node.js Version
+      placeholder: v18.0.0
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Rainbird Version
+      placeholder: v0.1.0
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Operating System
+      placeholder: Raspbian / Ubuntu / Debian / Windows / macOS / Docker
+    validations:
+      required: true
