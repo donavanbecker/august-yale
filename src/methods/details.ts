@@ -5,7 +5,7 @@ import { AugustLockDetails } from '../types.js';
  * @param {string} [lockId]
  * @return {AugustLockDetails}
  */
-export default async function details(this: any, lockId: string, internal: any): Promise<AugustLockDetails[]> {
+export default async function details(this: any, internal: any, lockId?: string): Promise<AugustLockDetails[]> {
   if (!lockId) {
     const locks = Object.keys(await this._locks());
 
