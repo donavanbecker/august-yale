@@ -32,15 +32,15 @@ body:
     id: Logs
     attributes:
       label: Relevant log output
-      placeholder: Bug reports that do not contain logs may be closed without warning. Show the RainBird logs here. Remove any sensitive information. Please Turn on Debug Mode before submitting your Issue so more logs can be shared to fix the issue being submitted.
+      placeholder: Bug reports that do not contain logs may be closed without warning. Show the August-Yale logs here. Remove any sensitive information. Please Turn on Debug Mode before submitting your Issue so more logs can be shared to fix the issue being submitted.
       render: shell
     validations:
       required: true
   - type: textarea
     id: Config
     attributes:
-      label: Config for RainBird
-      placeholder: Paste your RainBird config.json here. Remove any sensitive information, such as your RainBird device ipaddress or device password.
+      label: Config for August-Yale
+      placeholder: Paste your August-Yale config.json here. Remove any sensitive information, such as your August-Yale device ipaddress or device password.
       render: shell
     validations:
       required: true
@@ -69,7 +69,7 @@ body:
       required: true
   - type: input
     attributes:
-      label: Rainbird Version
+      label: August-Yale Version
       placeholder: v0.1.0
     validations:
       required: true

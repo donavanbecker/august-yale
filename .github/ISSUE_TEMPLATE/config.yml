@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Discord Channel for Rainbird (homebridge-rainbird)
+  - name: Discord Channel for August (homebridge-august)
     url: https://discord.gg/peABghgtaV
     about: Please ask and answer questions here.
   - name: Rainbrid - Pull Requests
-    url: https://github.com/donavanbecker/rainbird/pulls
+    url: https://github.com/donavanbecker/august-yale/pulls
     about: Please report security vulnerabilities here.

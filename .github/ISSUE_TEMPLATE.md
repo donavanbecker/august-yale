@@ -28,7 +28,7 @@ Show the logs here.
 **Rainbrid Config:**
 
 ```json
-Show your rainbird config.json here
+Show your august-yale config.json here
 ```
 
 **Screenshots:**
@@ -37,7 +37,7 @@ Show your rainbird config.json here
 **Environment:**
 
 * **Node.js Version**: <!-- node -v -->
-* **RainBird Version**:
+* **August-Yale Version**:
 * **Operating System**: Raspbian / Ubuntu / Debian / Windows / macOS / Docker
 
 

@@ -5,7 +5,7 @@
 # August-Yale
 
 <a href="https://www.npmjs.com/package/august-yale"><img title="npm version" src="https://badgen.net/npm/v/august-yale?icon=npm&label" ></a>
-<a href="https://www.npmjs.com/package/august-yale"><img title="npm downloads" src="https://badgen.net/npm/dt/rainbird?label=downloads" ></a>
+<a href="https://www.npmjs.com/package/august-yale"><img title="npm downloads" src="https://badgen.net/npm/dt/august-yale?label=downloads" ></a>
 <a href="https://discord.gg/8fpZA4S"><img title="discord-august-yale" src="https://badgen.net/discord/online-members/8fpZA4S?icon=discord&label=discord" ></a>
 
 <a href="https://paypal.me/donavanbecker"><img title="donavanbecker" src="https://badgen.net/badge/donavanbecker/paypal/yellow" ></a>
