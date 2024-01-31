@@ -110,13 +110,13 @@ class August {
     return locks.call(this, true); // true keeps the session alive
   }
 
-  async details(lockId: string) {
-    return details.call(this, lockId, false);
+  async details(lockId?: string) {
+    return details.call(this, false, lockId);
   }
 
-  async _details(lockId: string) {
+  async _details(lockId?: string) {
     // Interal use only
-    return details.call(this, lockId, true); // true keeps the session alive
+    return details.call(this, true, lockId); // true keeps the session alive
   }
 
   async status(lockId: string) {
@@ -182,7 +182,7 @@ class August {
     return new August(config).locks();
   }
 
-  static async details(config: any, lockId: string) {
+  static async details(config: any, lockId?: string) {
     return new August(config).details(lockId);
   }
 

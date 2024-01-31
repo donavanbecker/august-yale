@@ -5,7 +5,7 @@
 # August-Yale
 
 <a href="https://www.npmjs.com/package/august-yale"><img title="npm version" src="https://badgen.net/npm/v/august-yale?icon=npm&label" ></a>
-<a href="https://www.npmjs.com/package/august-yale"><img title="npm downloads" src="https://badgen.net/npm/dt/rainbird?label=downloads" ></a>
+<a href="https://www.npmjs.com/package/august-yale"><img title="npm downloads" src="https://badgen.net/npm/dt/august-yale?label=downloads" ></a>
 <a href="https://discord.gg/8fpZA4S"><img title="discord-august-yale" src="https://badgen.net/discord/online-members/8fpZA4S?icon=discord&label=discord" ></a>
 
 <a href="https://paypal.me/donavanbecker"><img title="donavanbecker" src="https://badgen.net/badge/donavanbecker/paypal/yellow" ></a>
@@ -318,7 +318,7 @@ Returns `body` of the HTTP response
 
 ## Acknowledgments
 
-This module has morphed from [Ryan Block](https://github.com/ryanblock)'s [august-connect](https://github.com/ryanblock/august-connect). Many thanks to him for doing most of the legwork. Also big ups to [Nolan Brown](https://medium.com/@nolanbrown/august-lock-rest-apis-the-basics-7ec7f31e7874) and [Joe Lu](https://github.com/snjoetw)'s [py-august](https://github.com/snjoetw/py-august) project for paving the way!
+The [javascript module](https://github.com/hufftheweevil/august-api) has morphed from [Ryan Block](https://github.com/ryanblock)'s [august-connect](https://github.com/ryanblock/august-connect). Many thanks to him for doing most of the legwork. Also big ups to [Nolan Brown](https://medium.com/@nolanbrown/august-lock-rest-apis-the-basics-7ec7f31e7874) and [Joe Lu](https://github.com/snjoetw)'s [py-august](https://github.com/snjoetw/py-august) project for paving the way!
 
 ## Notes
 
@@ -328,4 +328,4 @@ This module has morphed from [Ryan Block](https://github.com/ryanblock)'s [augus
 - Unfortunately, August does not publish their API for consumer usage, so this may break at any time; August name etc. trademark Assa Abloy
 
 ## Credit
-Typescript version of [hufftheweevil/august-api](https://github.com/hufftheweevil/august-api)
+This is a Typescript version of [hufftheweevil/august-api](https://github.com/hufftheweevil/august-api), Thanks [@hufftheweevil](https://github.com/hufftheweevil).
