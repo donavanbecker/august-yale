@@ -170,6 +170,10 @@ class August {
   }
 
   /* ----------------------------- Static methods ----------------------------- */
+  static addSimpleProps(obj: { state?: any; lockID?: any; status?: any; doorState?: any; info?: any; }, config?: any) {
+    return new August(config).addSimpleProps(obj);
+  }
+
   static async authorize(config?: any) {
     return new August(config).authorize();
   }
