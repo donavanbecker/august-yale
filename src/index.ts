@@ -119,13 +119,13 @@ class August {
     return details.call(this, true, lockId); // true keeps the session alive
   }
 
-  async status(lockId: string) {
-    return status.call(this, lockId, false);
+  async status(lockId?: string) {
+    return status.call(this, lockId!, false);
   }
 
-  async _status(lockId: string) {
+  async _status(lockId?: string) {
     // Interal use only
-    return status.call(this, lockId, true); // true keeps the session alive
+    return status.call(this, lockId!, true); // true keeps the session alive
   }
 
   /* --------------------------------- Action --------------------------------- */
@@ -170,35 +170,35 @@ class August {
   }
 
   /* ----------------------------- Static methods ----------------------------- */
-  static async authorize(config: any) {
+  static async authorize(config?: any) {
     return new August(config).authorize();
   }
 
-  static async validate(config: any, code: string) {
+  static async validate(code: string, config?: any) {
     return new August(config).validate(code);
   }
 
-  static async locks(config: any) {
+  static async locks(config?: any) {
     return new August(config).locks();
   }
 
-  static async details(config: any, lockId?: string) {
+  static async details(config?: any, lockId?: string) {
     return new August(config).details(lockId);
   }
 
-  static async status(config: any, lockId: any) {
+  static async status(config?: any, lockId?: any) {
     return new August(config).status(lockId);
   }
 
-  static async lock(config: any, lockId: any) {
+  static async lock(config?: any, lockId?: any) {
     return new August(config).lock(lockId);
   }
 
-  static async unlock(config: any, lockId: any) {
+  static async unlock(config?: any, lockId?: any) {
     return new August(config).unlock(lockId);
   }
 
-  static async subscribe(config: any, lockId: any, callback: any) {
+  static async subscribe(config?: any, lockId?: any, callback?: any) {
     return new August(config).subscribe(lockId, callback);
   }
 }
