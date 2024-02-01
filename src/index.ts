@@ -24,7 +24,7 @@ const API_URL_NON_US = 'https://api.aaecosystem.com';
 class August {
   config: config;
   token: any;
-  constructor(config: any) {
+  constructor(config: config) {
     this.config = setup(config);
   }
 
@@ -110,20 +110,20 @@ class August {
     return locks.call(this, true); // true keeps the session alive
   }
 
-  async details(lockId?: string) {
+  async details(lockId: string) {
     return details.call(this, false, lockId);
   }
 
-  async _details(lockId?: string) {
+  async _details(lockId: string) {
     // Interal use only
     return details.call(this, true, lockId); // true keeps the session alive
   }
 
-  async status(lockId?: string) {
+  async status(lockId: string) {
     return status.call(this, lockId!, false);
   }
 
-  async _status(lockId?: string) {
+  async _status(lockId: string) {
     // Interal use only
     return status.call(this, lockId!, true); // true keeps the session alive
   }
@@ -170,39 +170,39 @@ class August {
   }
 
   /* ----------------------------- Static methods ----------------------------- */
-  static addSimpleProps(obj: { state?: any; lockID?: any; status?: any; doorState?: any; info?: any; }, config?: any) {
+  static addSimpleProps(config: config, obj: { state?: any; lockID?: any; status?: any; doorState?: any; info?: any; }) {
     return new August(config).addSimpleProps(obj);
   }
 
-  static async authorize(config?: any) {
+  static async authorize(config: config) {
     return new August(config).authorize();
   }
 
-  static async validate(code: string, config?: any) {
+  static async validate(config: config, code: string) {
     return new August(config).validate(code);
   }
 
-  static async locks(config?: any) {
+  static async locks(config: config) {
     return new August(config).locks();
   }
 
-  static async details(config?: any, lockId?: string) {
+  static async details(config: config, lockId: string) {
     return new August(config).details(lockId);
   }
 
-  static async status(config?: any, lockId?: any) {
+  static async status(config: config, lockId: string) {
     return new August(config).status(lockId);
   }
 
-  static async lock(config?: any, lockId?: any) {
+  static async lock(config: config, lockId: string) {
     return new August(config).lock(lockId);
   }
 
-  static async unlock(config?: any, lockId?: any) {
+  static async unlock(config: config, lockId: string) {
     return new August(config).unlock(lockId);
   }
 
-  static async subscribe(config?: any, lockId?: any, callback?: any) {
+  static async subscribe(config: config, lockId: string, callback?: any) {
     return new August(config).subscribe(lockId, callback);
   }
 }
