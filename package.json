@@ -29,6 +29,7 @@
   "scripts": {
     "check": "npm install && npm outdated",
     "update": "ncu -u && npm update && npm install",
+    "updateDependencies": "npm run check && npm run update",
     "lint": "eslint src/**.ts",
     "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run lint && npm run build",
