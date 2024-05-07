@@ -155,4 +155,20 @@ export type AugustUser = {
     FirstName: string,
     LastName: string,
     identifiers: Array<any>
+
+// via @types/tiny-json-http
+export interface TinyResult {
+  body: any;
+  headers: any;
+}
+
+export interface TinyOptions {
+  url: string;
+  data?: any;
+  headers?: any;
+  /**
+   * Set to true the response body is returned as a buffer
+   */
+  buffer?: boolean | undefined;
+  timeout?: number | undefined;
 }
