@@ -46,19 +46,19 @@
     }
   ],
   "dependencies": {
-    "pubnub": "^7.6.2",
+    "pubnub": "^8.0.1",
     "tiny-json-http": "^7.5.1"
   },
   "devDependencies": {
-    "@types/node": "^20.12.4",
+    "@types/node": "^20.12.10",
     "@types/pubnub": "^7.4.2",
     "@types/tiny-json-http": "^7.3.4",
-    "@typescript-eslint/eslint-plugin": "^7.5.0",
-    "@typescript-eslint/parser": "^7.5.0",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
     "eslint": "^8.57.0",
-    "npm-check-updates": "^16.14.18",
+    "npm-check-updates": "^16.14.20",
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.4"
+    "typescript": "^5.4.5"
   }
 }

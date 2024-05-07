@@ -154,7 +154,8 @@ export type AugustUser = {
     UserType: string,
     FirstName: string,
     LastName: string,
-    identifiers: Array<any>
+    identifiers: Array<any>,
+}
 
 // via @types/tiny-json-http
 export interface TinyResult {
