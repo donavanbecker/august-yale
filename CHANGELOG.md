@@ -2,14 +2,14 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
-## [1.0.0](https://github.com/donavanbecker/august-yale/tag/v1.0.0) (2024-XX-XX)
+## [1.0.0](https://github.com/donavanbecker/august-yale/tag/v1.0.0) (2024-05-07)
 
 ### What's Changed
 - Add: concurrent session requests eliminated, Thanks [@joeybaker](https://github.com/joeybakerThanks), [#6](https://github.com/donavanbecker/august-yale/pull/6)
 - Fix: let fetch errors bubble up, Thanks [@joeybaker](https://github.com/joeybakerThanks), [#5](https://github.com/donavanbecker/august-yale/pull/5)
 - Housekeeping and updated dependencies.
 
-**Full Changelog**: https://github.com/donavanbecker/august-yale/compare/v0.2.0...v0.3.0
+**Full Changelog**: https://github.com/donavanbecker/august-yale/compare/v0.2.0...v1.0.0
 
 ## [0.2.0](https://github.com/donavanbecker/august-yale/tag/v0.2.0) (2024-01-30)
 
