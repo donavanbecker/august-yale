@@ -1,6 +1,6 @@
 {
   "name": "august-yale",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "API module for interacting with and receiving events from August smart locks",
   "homepage": "https://github.com/donavanbecker/august-yale#readme",
   "author": {
@@ -23,18 +23,17 @@
     "url": "https://github.com/donavanbecker/august-yale/issues"
   },
   "engines": {
-    "node": "^18 || ^20"
+    "node": "^18 || ^20 || ^22"
   },
   "main": "dist/index.js",
   "scripts": {
     "check": "npm install && npm outdated",
     "update": "ncu -u && npm update && npm install",
-    "lint": "eslint src/**.ts",
+    "lint": "eslint src/**/*.ts",
     "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run lint && npm run build",
     "postpublish": "npm run clean",
-    "clean": "rimraf ./dist",
-    "test": "eslint src/**.ts"
+    "clean": "rimraf ./dist"
   },
   "funding": [
     {
@@ -47,19 +46,19 @@
     }
   ],
   "dependencies": {
-    "pubnub": "^7.5.0",
+    "pubnub": "^8.0.1",
     "tiny-json-http": "^7.5.1"
   },
   "devDependencies": {
-    "@types/node": "^20.11.13",
-    "@types/pubnub": "^7.4.1",
+    "@types/node": "^20.12.10",
+    "@types/pubnub": "^7.4.2",
     "@types/tiny-json-http": "^7.3.4",
-    "@typescript-eslint/eslint-plugin": "^6.20.0",
-    "@typescript-eslint/parser": "^6.20.0",
-    "eslint": "^8.56.0",
-    "npm-check-updates": "^16.14.14",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.0",
+    "npm-check-updates": "^16.14.20",
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   }
 }

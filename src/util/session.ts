@@ -1,3 +1,5 @@
+let request: Promise<any> | null = null;
+
 /**
  * * Start or continue a session
  * If token not saved, fetch a new token
@@ -22,7 +24,11 @@ export default async function session(this: any): Promise<object> {
 
     const data = { installId, identifier, password };
 
-    const response = await this.fetch({ method: 'post', url: 'session', headers, data });
+    if (request === null) {
+      request = this.fetch({ method: 'post', url: 'session', headers, data });
+    }
+    const response = await request;
+    request = null;
 
     this.token = response.headers['x-august-access-token'];
     headers['x-august-access-token'] = this.token;

@@ -16,7 +16,10 @@ import status from './methods/status.js';
 import details from './methods/details.js';
 import subscribe from './methods/subscribe.js';
 
-import { config } from './types.js';
+import { config, TinyResult, TinyOptions } from './types.js';
+interface FetchOptions extends TinyOptions {
+  method: keyof typeof tiny;
+}
 
 const API_URL_US = 'https://api-production.august.com';
 const API_URL_NON_US = 'https://api.aaecosystem.com';
@@ -24,12 +27,13 @@ const API_URL_NON_US = 'https://api.aaecosystem.com';
 class August {
   config: config;
   token: any;
-  constructor(config: any) {
+  constructor(config: config) {
     this.config = setup(config);
   }
 
-  async fetch({ method, ...params }: { method: string, [key: string]: any }) {
-    const API_URL = this.config.countryCode === 'US' ? API_URL_US : API_URL_NON_US;
+  async fetch({ method, ...params }: FetchOptions): Promise<TinyResult> {
+    const API_URL =
+      this.config.countryCode === 'US' ? API_URL_US : API_URL_NON_US;
 
     // Ensure proper url
     if (!params.url.startsWith(API_URL)) {
@@ -38,24 +42,11 @@ class August {
       }
       params.url = API_URL + params.url;
     }
-    try {
-      // Keep this `await` - it allows us to catch errors from tiny
-      // console.log('REQUEST', method, params)
-      const res = await (tiny as any)[method](params);
-      // console.log('RESPONSE', res)
-      return res;
-    } catch (err: any) {
-      // Convert giagantic error to a more manageable one
-      let errorMessage;
-      if (err.statusCode) {
-        errorMessage = `FetchError: Status ${err.statusCode} (${err.body.code}): ${err.body.message}`;
-      } else {
-        errorMessage = err;
-      }
 
-      console.error(errorMessage);
-      return {};
-    }
+    // console.log('REQUEST', method, params)
+    const res = await tiny[method](params);
+    // console.log('RESPONSE', res)
+    return res;
   }
 
   /* --------------------------------- Session -------------------------------- */
@@ -110,22 +101,22 @@ class August {
     return locks.call(this, true); // true keeps the session alive
   }
 
-  async details(lockId?: string) {
+  async details(lockId: string) {
     return details.call(this, false, lockId);
   }
 
-  async _details(lockId?: string) {
+  async _details(lockId: string) {
     // Interal use only
     return details.call(this, true, lockId); // true keeps the session alive
   }
 
   async status(lockId: string) {
-    return status.call(this, lockId, false);
+    return status.call(this, lockId!, false);
   }
 
   async _status(lockId: string) {
     // Interal use only
-    return status.call(this, lockId, true); // true keeps the session alive
+    return status.call(this, lockId!, true); // true keeps the session alive
   }
 
   /* --------------------------------- Action --------------------------------- */
@@ -170,35 +161,39 @@ class August {
   }
 
   /* ----------------------------- Static methods ----------------------------- */
-  static async authorize(config: any) {
+  static addSimpleProps(config: config, obj: { state?: any; lockID?: any; status?: any; doorState?: any; info?: any; }) {
+    return new August(config).addSimpleProps(obj);
+  }
+
+  static async authorize(config: config) {
     return new August(config).authorize();
   }
 
-  static async validate(config: any, code: string) {
+  static async validate(config: config, code: string) {
     return new August(config).validate(code);
   }
 
-  static async locks(config: any) {
+  static async locks(config: config) {
     return new August(config).locks();
   }
 
-  static async details(config: any, lockId?: string) {
+  static async details(config: config, lockId: string) {
     return new August(config).details(lockId);
   }
 
-  static async status(config: any, lockId: any) {
+  static async status(config: config, lockId: string) {
     return new August(config).status(lockId);
   }
 
-  static async lock(config: any, lockId: any) {
+  static async lock(config: config, lockId: string) {
     return new August(config).lock(lockId);
   }
 
-  static async unlock(config: any, lockId: any) {
+  static async unlock(config: config, lockId: string) {
     return new August(config).unlock(lockId);
   }
 
-  static async subscribe(config: any, lockId: any, callback: any) {
+  static async subscribe(config: config, lockId: string, callback?: any) {
     return new August(config).subscribe(lockId, callback);
   }
 }

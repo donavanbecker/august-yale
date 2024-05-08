@@ -26,7 +26,7 @@ export default function setup(config: any): object {
     COUNTRY_CODE,
   } = process.env;
 
-  const countryCode = config.countryCode ?? COUNTRY_CODE ?? 'US';
+  const countryCode = config.countryCode || COUNTRY_CODE || 'US';
   const errors = [];
 
   const DEFAULT_API_KEY = countryCode === 'US' ? DEFAULT_API_KEY_US : DEFAULT_API_KEY_NON_US;
