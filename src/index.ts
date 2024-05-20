@@ -16,7 +16,7 @@ import status from './methods/status.js';
 import details from './methods/details.js';
 import subscribe from './methods/subscribe.js';
 
-import { config, TinyResult, TinyOptions } from './types.js';
+import type { config, TinyResult, TinyOptions } from './types.js';
 interface FetchOptions extends TinyOptions {
   method: keyof typeof tiny;
 }

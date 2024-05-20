@@ -1,4 +1,4 @@
-import { AugustLockStatus } from '../types.js';
+import type { AugustLockStatus } from '../types.js';
 
 /**
  * * Lock or unlock a lock

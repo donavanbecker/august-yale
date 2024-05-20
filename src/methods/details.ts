@@ -1,4 +1,4 @@
-import { AugustLockDetails } from '../types.js';
+import type { AugustLockDetails } from '../types.js';
 /**
  * * Get details for a lock
  *
