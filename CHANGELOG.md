@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [1.0.1](https://github.com/donavanbecker/august-yale/tag/v1.0.1) (2024-05-25)
+
+### What's Changed
+- Housekeeping and updated dependencies.
+
+**Full Changelog**: https://github.com/donavanbecker/august-yale/compare/v1.0.0...v1.0.1
+
 ## [1.0.0](https://github.com/donavanbecker/august-yale/tag/v1.0.0) (2024-05-07)
 
 ### What's Changed
