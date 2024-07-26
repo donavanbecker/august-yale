@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [1.1.0](https://github.com/donavanbecker/august-yale/tag/v1.1.0) (2024-07-26)
+
+### What's Changed
+- Added `locking` and `unlocking` to `addSimpleProps`
+- Housekeeping and updated dependencies.
+
+**Full Changelog**: https://github.com/donavanbecker/august-yale/compare/v1.0.1...v1.1.0
+
 ## [1.0.1](https://github.com/donavanbecker/august-yale/tag/v1.0.1) (2024-05-25)
 
 ### What's Changed
