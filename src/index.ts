@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+
 /* Copyright(C) 2024, donavanbecker (https://github.com/donavanbecker). All rights reserved.
  *
  * index.ts: august-yale API registration.
@@ -144,6 +144,8 @@ class August {
     if (status) {
       obj.state.locked = status === 'kAugLockState_Locked' || status === 'locked';
       obj.state.unlocked = status === 'kAugLockState_Unlocked' || status === 'unlocked';
+      obj.state.locking = status === 'kAugLockState_Locking' || status === 'locking';
+      obj.state.unlocking = status === 'kAugLockState_Unlocking' || status === 'unlocking';
     }
     if (doorState) {
       obj.state.open =
