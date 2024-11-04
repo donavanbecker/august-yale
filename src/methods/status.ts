@@ -1,32 +1,32 @@
-import type { AugustLockStatus } from '../types.js';
+import type { AugustLockStatus } from '../types.js'
 /**
- * * Get status of a lock
+ * Get status of a lock
  *
  * @param {string} [lockId]
  * @return {AugustLockStatus}
  */
 export default async function status(this: any, lockId: string, internal: any): Promise<AugustLockStatus | any> {
   if (!lockId) {
-    const locks = Object.keys(await this._locks());
+    const locks = Object.keys(await this._locks())
 
     if (locks.length > 1) {
-      return Promise.all(locks.map(this._status.bind(this)));
+      return Promise.all(locks.map(this._status.bind(this)))
     }
 
-    lockId = locks[0];
+    lockId = locks[0]
   }
 
-  const { body } = await this.put(`/remoteoperate/${lockId}/status`);
+  const { body } = await this.put(`/remoteoperate/${lockId}/status`)
 
   if (!internal) {
-    this.end();
+    this.end()
   }
 
   if (!body) {
-    return;
+    return
   }
 
-  this.addSimpleProps(body);
+  this.addSimpleProps(body)
 
-  return body;
+  return body
 }

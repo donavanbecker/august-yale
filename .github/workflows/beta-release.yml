@@ -1,4 +1,4 @@
-name: Node-CI Beta
+name: Beta Release
 
 on:
   push:
@@ -18,9 +18,9 @@ jobs:
 
   publish:
     needs: lint
-
     if: ${{ github.repository == 'donavanbecker/august-yale' }}
-
+    permissions:
+      id-token: write
     uses: donavanbecker/.github/.github/workflows/npm-publish.yml@latest
     with:
       tag: 'beta'
