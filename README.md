@@ -10,8 +10,8 @@
 
 <a href="https://paypal.me/donavanbecker"><img title="donavanbecker" src="https://badgen.net/badge/donavanbecker/paypal/yellow" ></a>
 
-<p>The <a href="https://august.com">August</a>-<a href="https://yale.com">Yale</a>  
-library is a simple module for locking, unlocking, and getting the status of August smart locks connected via WiFi. You can also subscribe to lock events.</a>. 
+<p>The <a href="https://august.com">August</a>-<a href="https://yale.com">Yale</a>
+library is a simple module for locking, unlocking, and getting the status of August smart locks connected via WiFi. You can also subscribe to lock events.</a>.
 </p>
 
 </span>
@@ -36,12 +36,19 @@ npm install -save august-yale
 Create a new `August` object that will save your configuration while you use it:
 
 ```js
-let August = require('august-yale')
+const August = require('august-yale')
 
-let august = new August({
+const august = new August({
   installId: 'uniqueId', // Can be anything, but save it for future use on this account
   augustId: 'yourEmailOrPhone', // Phone must be formatted +[countrycode][number]
   password: 'yourPassword'
+})
+
+// Example usage of the august object
+august.authorize().then(() => {
+  console.log('Authorization successful')
+}).catch((error) => {
+  console.error('Authorization failed', error)
 })
 ```
 
@@ -63,8 +70,8 @@ And you're all set!
 
 ```js
 // Example
-let myLocks = await august.locks()
-let lockId = Object.keys(myLocks)[0]
+const myLocks = await august.locks()
+const lockId = Object.keys(myLocks)[0]
 august.lock(lockId)
 ```
 
@@ -124,7 +131,7 @@ Returns map **object** of lock IDs to **AugustLockBasic** objects.
 ##### Example
 
 ```js
-let myLocks = await august.locks()
+const myLocks = await august.locks()
 console.log(myLocks)
 // {
 //  '7EDFA965E0AE0CE19772AFA435364295': {
@@ -146,7 +153,7 @@ If `lockId` is specified, or if only one lock is on account, returns **AugustLoc
 ##### Examples
 
 ```js
-let lockDetails = await august.details('7EDFA965E0AE0CE19772AFA435364295')
+const lockDetails = await august.details('7EDFA965E0AE0CE19772AFA435364295')
 console.log(lockDetails)
 // {
 //   LockName: 'Front door',
@@ -158,7 +165,7 @@ console.log(lockDetails)
 
 ```js
 // Assuming you have multiple locks
-let lockDetails = await august.details()
+const lockDetails = await august.details()
 console.log(lockDetails)
 // [
 //   {
@@ -185,7 +192,7 @@ If `lockId` is specified, or if only one lock is on account, returns **AugustLoc
 ##### Examples
 
 ```js
-let lockStatus = await august.status('7EDFA965E0AE0CE19772AFA435364295')
+const lockStatus = await august.status('7EDFA965E0AE0CE19772AFA435364295')
 console.log(lockStatus)
 // {
 //   lockID: '7EDFA965E0AE0CE19772AFA435364295'
@@ -203,7 +210,7 @@ console.log(lockStatus)
 
 ```js
 // Assuming you have multiple locks
-let lockStatuses = await august.status()
+const lockStatuses = await august.status()
 console.log(lockStatuses)
 // [
 //   {
@@ -246,7 +253,7 @@ Returns a **AugustLockStatus** object after succesfully locking.
 ##### Example
 
 ```js
-let lockStatus = await lock('7EDFA965E0AE0CE19772AFA435364295')
+const lockStatus = await lock('7EDFA965E0AE0CE19772AFA435364295')
 console.log(lockStatus)
 // {
 //   lockID: '7EDFA965E0AE0CE19772AFA435364295'
@@ -273,7 +280,7 @@ Returns a **AugustLockStatus** object after succesfully unlocking.
 ##### Example
 
 ```js
-let lockStatus = await unlock('7EDFA965E0AE0CE19772AFA435364295')
+const lockStatus = await unlock('7EDFA965E0AE0CE19772AFA435364295')
 console.log(lockStatus)
 // {
 //   lockID: '7EDFA965E0AE0CE19772AFA435364295'
@@ -328,4 +335,5 @@ The [javascript module](https://github.com/hufftheweevil/august-api) has morphed
 - Unfortunately, August does not publish their API for consumer usage, so this may break at any time; August name etc. trademark Assa Abloy
 
 ## Credit
+
 This is a Typescript version of [hufftheweevil/august-api](https://github.com/hufftheweevil/august-api), Thanks [@hufftheweevil](https://github.com/hufftheweevil).

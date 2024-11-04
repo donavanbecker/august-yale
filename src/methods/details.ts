@@ -1,28 +1,29 @@
-import type { AugustLockDetails } from '../types.js';
+import type { AugustLockDetails } from '../types.js'
 /**
- * * Get details for a lock
+ * Get details for a lock
  *
+ * @param {any} internal
  * @param {string} [lockId]
  * @return {AugustLockDetails}
  */
 export default async function details(this: any, internal: any, lockId?: string): Promise<AugustLockDetails[]> {
   if (!lockId) {
-    const locks = Object.keys(await this._locks());
+    const locks = Object.keys(await this._locks())
 
     if (locks.length > 1) {
-      return Promise.all(locks.map(this._details.bind(this)));
+      return Promise.all(locks.map(this._details.bind(this)))
     }
 
-    lockId = locks[0];
+    lockId = locks[0]
   }
 
-  const { body } = await this.get(`/locks/${lockId}`);
+  const { body } = await this.get(`/locks/${lockId}`)
 
   if (!internal) {
-    this.end();
+    this.end()
   }
 
-  body.lockId = body.LockID;
+  body.lockId = body.LockID
 
-  return body;
+  return body
 }
