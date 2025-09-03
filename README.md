@@ -1,6 +1,6 @@
 <span align="center">
 
-<a href="https://github.com/donavanbecker/august-yale"><img alt="august-yale" src="https://raw.githubusercontent.com/donavanbecker/august-yale/latest/branding/August-Yale.svg?sanitize=true" width="500px"></a>
+<a href="https://github.com/homebridge-plugins/august-yale"><img alt="august-yale" src="https://raw.githubusercontent.com/homebridge-plugins/august-yale/latest/branding/August-Yale.svg?sanitize=true" width="500px"></a>
 
 # August-Yale
 

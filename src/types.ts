@@ -1,4 +1,4 @@
-/* Copyright(C) 2024, donavanbecker (https://github.com/donavanbecker). All rights reserved.
+/* Copyright(C) 2024, homebridge-plugins (https://github.com/homebridge-plugins). All rights reserved.
  *
  * types.ts: august-yale API registration.
  */

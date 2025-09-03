@@ -5,7 +5,7 @@ on:
     types: [published]
 
 jobs:
-    changerelease:
-        uses: donavanbecker/.github/.github/workflows/changerelease.yml@latest
-        secrets:
-            token: ${{ secrets.GITHUB_TOKEN }}
+  changerelease:
+      uses: homebridge/.github/.github/workflows/change-release.yml@latest
+      secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}

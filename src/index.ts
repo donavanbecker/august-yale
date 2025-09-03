@@ -1,6 +1,6 @@
 import type { config, TinyOptions, TinyResult } from './types.js'
 
-/* Copyright(C) 2024, donavanbecker (https://github.com/donavanbecker). All rights reserved.
+/* Copyright(C) 2024, homebridge-plugins (https://github.com/homebridge-plugins). All rights reserved.
  *
  * index.ts: august-yale API registration.
  */

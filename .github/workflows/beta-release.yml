@@ -7,21 +7,21 @@ on:
 
 jobs:
   build_and_test:
-    uses: donavanbecker/.github/.github/workflows/nodejs-build-and-test.yml@latest
+    uses: homebridge/.github/.github/workflows/nodejs-build-and-test.yml@latest
     with:
-      enable_coverage: true
+      enable_coverage: false
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
   lint:
     needs: build_and_test
-    uses: donavanbecker/.github/.github/workflows/eslint.yml@latest
+    uses: homebridge/.github/.github/workflows/eslint.yml@latest
 
   publish:
     needs: lint
-    if: ${{ github.repository == 'donavanbecker/august-yale' }}
+    if: ${{ github.repository == 'homebridge-plugins/august-yale' }}
     permissions:
       id-token: write
-    uses: donavanbecker/.github/.github/workflows/npm-publish.yml@latest
+    uses: homebridge/.github/.github/workflows/npm-publish-esm.yml@latest
     with:
       tag: 'beta'
       dynamically_adjust_version: true
@@ -29,3 +29,28 @@ jobs:
       pre_id: 'beta'
     secrets:
       npm_auth_token: ${{ secrets.npm_token }}
+
+  pre-release:
+    needs: publish
+    if: ${{ github.repository == 'homebridge-plugins/august-yale' }}
+    uses: homebridge/.github/.github/workflows/pre-release.yml@latest
+    with:
+      npm_version: ${{ needs.publish.outputs.NPM_VERSION }}
+      body: |
+        **Beta Release**
+        **Version**: v${{ needs.publish.outputs.NPM_VERSION }}
+        [How To Test Beta Releases](https://github.com/homebridge-plugins/august-yale/wiki/Beta-Version)
+
+  github-releases-to-discord:
+    name: Discord Webhooks
+    needs: [build_and_test,publish]
+    if: ${{ github.repository == 'homebridge-plugins/august-yale' }}
+    uses: homebridge/.github/.github/workflows/discord-webhooks.yml@latest
+    with:
+      title: "August Yale Module Beta Release"
+      description: |
+        This is a beta release of the August Yale module which is used by homebridge-august plugin.
+        Version `v${{ needs.publish.outputs.NPM_VERSION }}`
+      url: "https://github.com/homebridge-plugins/august-yale/releases/tag/v${{ needs.publish.outputs.NPM_VERSION }}"
+    secrets:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL_BETA || secrets.DISCORD_WEBHOOK_URL_LATEST }}
