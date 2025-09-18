@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
 
+## [1.1.4](https://github.com/homebridge-plugins/august-yale/releases/tag/v1.1.4) (2025-09-18)
+
+## What's Changed
+* Add comprehensive Yale/August API endpoints and brand support - Production Ready v1.2.0  by @Copilot in https://github.com/homebridge-plugins/august-yale/pull/24
+
+**Full Changelog**: https://github.com/homebridge-plugins/august-yale/compare/v1.1.3...v1.1.4
+
 ## [1.2.0](https://github.com/homebridge-plugins/august-yale/tag/v1.2.0) (2024-12-15)
 
 ### What's Changed
