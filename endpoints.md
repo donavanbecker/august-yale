@@ -2,15 +2,68 @@
 
 This is an updated version of [Nolan Brown's list](https://nolanbrown.medium.com/august-lock-rest-apis-the-basics-7ec7f31e7874). Endpoints without a status indicate I am unable to test at this time. Known keys are listed for POST and PUT endpoints that require data. If you have any information to add to this list, please post a GitHub issue or PR.
 
-**Note:** Not all endpoints are implemented in this package. Some may be added in the future. This list is for information and research.
+**Note:** Many endpoints are now implemented in this package as of v1.2.0. See the API documentation for available methods.
 
 Endpoint URL depends on brand and location:
 
 - August (US): https://api-production.august.com
 - Yale Access (US): https://api-production.august.com
 - Yale Home (Non-US): https://api.aaecosystem.com
+- Yale Global (Non-US): https://api.aaecosystem.com
+- Yale August (US): https://api-production.august.com
 
-List last updated 5/1/22
+List last updated 12/15/24
+
+## Implemented Endpoints
+
+The following endpoints are implemented in this package:
+
+### Session and Validation ✅
+- POST /session - `authorize()`
+- POST /validation/email - `authorize()`  
+- POST /validation/phone - `authorize()`
+- POST /validate/email - `validate()`
+- POST /validate/phone - `validate()`
+
+### Users ✅
+- GET /users/me - `user()`
+
+### Houses ✅
+- GET /users/houses/mine - `houses()`
+- GET /houses/{houseID} - `houseDetails()`
+- GET /houses/{houseID}/activities - `houseActivities()`
+- GET /houses/{houseID}/temperature - `houseTemperature()`
+
+### Locks ✅
+- GET /users/locks/mine - `locks()`
+- GET /locks/{lockID} - `details()`
+- GET /locks/{lockID}/status - `status()`
+- GET /locks/{lockID}/pins - `pins()`
+- PUT /remoteoperate/{lockID}/lock - `lock()`
+- PUT /remoteoperate/{lockID}/unlock - `unlock()`
+- PUT /remoteoperate/{lockID}/unlatch - `unlatch()`
+- PUT /remoteoperate/{lockID}/lock?v=2.3.1&type=async - `lockAsync()`
+- PUT /remoteoperate/{lockID}/unlock?v=2.3.1&type=async - `unlockAsync()`
+- PUT /remoteoperate/{lockID}/unlatch?v=2.3.1&type=async - `unlatchAsync()`
+- PUT /remoteoperate/{lockID}/status?v=2.3.1&type=async&intent=wakeup - `statusAsync()`
+
+### Doorbells ✅
+- GET /users/doorbells/mine - `doorbells()`
+- GET /doorbells/{doorbellID} - `doorbellDetails()`
+- PUT /doorbells/{doorbellID}/wakeup - `wakeupDoorbell()`
+
+### Alarms ✅ 
+- GET /users/alarms/mine - `alarms()`
+- GET /alarms/{alarmID}/devices - `alarmDevices()`
+- PUT /alarms/{alarmID}/state/{armState} - `setAlarmState()`
+
+### Device Capabilities ✅
+- GET /devices/capabilities - `capabilities()`
+
+### WebSocket Subscriptions ✅
+- POST /websocket/subscribers - `addWebSocketSubscription()`
+- GET /websocket/subscribers/{subscriberID} - `getWebSocketSubscriptions()`
+- DELETE /websocket/subscribers/{subscriberID} - `deleteWebSocketSubscription()`
 
 ## Session and Validate
 
