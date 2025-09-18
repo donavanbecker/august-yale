@@ -9,6 +9,7 @@ export interface config {
   password?: string
   augustId?: string
   countryCode?: string
+  brand?: string
 }
 
 export interface AugustLockStatus {
