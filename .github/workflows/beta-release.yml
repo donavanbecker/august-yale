@@ -47,9 +47,8 @@ jobs:
     if: ${{ github.repository == 'homebridge-plugins/august-yale' }}
     uses: homebridge/.github/.github/workflows/discord-webhooks.yml@latest
     with:
-      title: "August Yale Module Beta Release"
+      title: "August-Yale Module Beta Release"
       description: |
-        This is a beta release of the August Yale module which is used by homebridge-august plugin.
         Version `v${{ needs.publish.outputs.NPM_VERSION }}`
       url: "https://github.com/homebridge-plugins/august-yale/releases/tag/v${{ needs.publish.outputs.NPM_VERSION }}"
     secrets:
