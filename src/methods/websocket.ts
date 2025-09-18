@@ -56,12 +56,7 @@ async function getWebSocketSubscriptions(this: any, keepSession: boolean, subscr
  */
 async function deleteWebSocketSubscription(this: any, keepSession: boolean, subscriberId: string): Promise<any> {
   try {
-    // Use DELETE method via fetch since tiny-json-http doesn't have native delete method
-    const response = await this.fetch({
-      method: 'delete',
-      url: `/websocket/subscribers/${subscriberId}`,
-      headers: await this.session?.headers || {},
-    })
+    const response = await this.delete(`/websocket/subscribers/${subscriberId}`)
     return response?.body
   } catch (error) {
     console.error('Error deleting WebSocket subscription:', error)

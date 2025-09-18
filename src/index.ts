@@ -95,6 +95,10 @@ class August {
     return this.#start('put', endpoint, data)
   }
 
+  async delete(endpoint: any) {
+    return this.#start('delete', endpoint, null)
+  }
+
   end() {
     // End the session (called automatically in every method below except where noted)
     this.token = null

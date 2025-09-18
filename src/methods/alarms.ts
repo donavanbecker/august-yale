@@ -4,6 +4,7 @@
  */
 
 import { BRAND_CAPABILITIES } from '../settings.js'
+import { validateAlarmId, validateArmState } from '../util/validate-input.js'
 
 /**
  * Get user's alarms
@@ -37,6 +38,8 @@ async function alarms(this: any, keepSession: boolean): Promise<any> {
  * @returns Alarm devices
  */
 async function alarmDevices(this: any, keepSession: boolean, alarmId: string): Promise<any> {
+  validateAlarmId(alarmId)
+
   try {
     // Check if brand supports alarms
     const brandCapabilities = BRAND_CAPABILITIES[this.config.brand]
@@ -65,6 +68,9 @@ async function alarmDevices(this: any, keepSession: boolean, alarmId: string): P
  * @returns Alarm state response
  */
 async function setAlarmState(this: any, keepSession: boolean, alarmId: string, armState: string, areaIds?: string[]): Promise<any> {
+  validateAlarmId(alarmId)
+  validateArmState(armState)
+
   try {
     // Check if brand supports alarms
     const brandCapabilities = BRAND_CAPABILITIES[this.config.brand]

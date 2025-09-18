@@ -3,6 +3,8 @@
  * houses.ts: August-Yale API house-related endpoints.
  */
 
+import { validateHouseId, validateLimit } from '../util/validate-input.js'
+
 /**
  * Get user's houses
  * @param keepSession - Whether to keep the session alive after this call
@@ -29,6 +31,8 @@ async function houses(this: any, keepSession: boolean): Promise<any> {
  * @returns House details
  */
 async function houseDetails(this: any, keepSession: boolean, houseId: string): Promise<any> {
+  validateHouseId(houseId)
+
   try {
     const response = await this.get(`/houses/${houseId}`)
     return response?.body
@@ -50,6 +54,9 @@ async function houseDetails(this: any, keepSession: boolean, houseId: string): P
  * @returns House activities
  */
 async function houseActivities(this: any, keepSession: boolean, houseId: string, limit: number = 8): Promise<any> {
+  validateHouseId(houseId)
+  validateLimit(limit)
+
   try {
     const response = await this.get(`/houses/${houseId}/activities?limit=${limit}`)
     return response?.body?.events || response?.body
@@ -70,6 +77,8 @@ async function houseActivities(this: any, keepSession: boolean, houseId: string,
  * @returns House temperature data
  */
 async function houseTemperature(this: any, keepSession: boolean, houseId: string): Promise<any> {
+  validateHouseId(houseId)
+
   try {
     const response = await this.get(`/houses/${houseId}/temperature`)
     return response?.body
