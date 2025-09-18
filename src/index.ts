@@ -20,9 +20,15 @@ import doorbells, { doorbellDetails, wakeupDoorbell } from './methods/doorbells.
 import alarms, { alarmDevices, setAlarmState } from './methods/alarms.js'
 import pins from './methods/pins.js'
 import capabilities from './methods/capabilities.js'
+import addWebSocketSubscription, { deleteWebSocketSubscription, getWebSocketSubscriptions } from './methods/websocket.js'
+import lockAsync, { statusAsync, unlatchAsync, unlockAsync } from './methods/async-operations.js'
 import session from './util/session.js'
 import setup from './util/setup.js'
 import { BASE_URLS, Brand } from './settings.js'
+
+// Export exceptions for external use
+export { BridgeError, InvalidAuth, RateLimitError, TimeoutError, YaleApiError } from './exceptions.js'
+export { Brand } from './settings.js'
 
 interface FetchOptions extends TinyOptions {
   method: keyof typeof tiny
@@ -142,6 +148,48 @@ class August {
 
   async unlatch(lockId: string) {
     return unlatch.call(this, lockId)
+  }
+
+  /* --------------------------- Async operations ---------------------------- */
+  async lockAsync(lockId: string, hyperBridge?: boolean) {
+    return lockAsync.call(this, lockId, hyperBridge)
+  }
+
+  async unlockAsync(lockId: string, hyperBridge?: boolean) {
+    return unlockAsync.call(this, lockId, hyperBridge)
+  }
+
+  async unlatchAsync(lockId: string, hyperBridge?: boolean) {
+    return unlatchAsync.call(this, lockId, hyperBridge)
+  }
+
+  async statusAsync(lockId: string, hyperBridge?: boolean) {
+    return statusAsync.call(this, lockId, hyperBridge)
+  }
+
+  /* --------------------------- WebSocket methods --------------------------- */
+  async addWebSocketSubscription() {
+    return addWebSocketSubscription.call(this, false)
+  }
+
+  async _addWebSocketSubscription() {
+    return addWebSocketSubscription.call(this, true)
+  }
+
+  async getWebSocketSubscriptions(subscriberId?: string) {
+    return getWebSocketSubscriptions.call(this, false, subscriberId)
+  }
+
+  async _getWebSocketSubscriptions(subscriberId?: string) {
+    return getWebSocketSubscriptions.call(this, true, subscriberId)
+  }
+
+  async deleteWebSocketSubscription(subscriberId: string) {
+    return deleteWebSocketSubscription.call(this, false, subscriberId)
+  }
+
+  async _deleteWebSocketSubscription(subscriberId: string) {
+    return deleteWebSocketSubscription.call(this, true, subscriberId)
   }
 
   /* ----------------------------- House methods ----------------------------- */
@@ -326,6 +374,36 @@ class August {
 
   static async subscribe(config: config, lockId: string, callback?: any) {
     return new August(config).subscribe(lockId, callback)
+  }
+
+  // Async operations
+  static async lockAsync(config: config, lockId: string, hyperBridge?: boolean) {
+    return new August(config).lockAsync(lockId, hyperBridge)
+  }
+
+  static async unlockAsync(config: config, lockId: string, hyperBridge?: boolean) {
+    return new August(config).unlockAsync(lockId, hyperBridge)
+  }
+
+  static async unlatchAsync(config: config, lockId: string, hyperBridge?: boolean) {
+    return new August(config).unlatchAsync(lockId, hyperBridge)
+  }
+
+  static async statusAsync(config: config, lockId: string, hyperBridge?: boolean) {
+    return new August(config).statusAsync(lockId, hyperBridge)
+  }
+
+  // WebSocket methods
+  static async addWebSocketSubscription(config: config) {
+    return new August(config).addWebSocketSubscription()
+  }
+
+  static async getWebSocketSubscriptions(config: config, subscriberId?: string) {
+    return new August(config).getWebSocketSubscriptions(subscriberId)
+  }
+
+  static async deleteWebSocketSubscription(config: config, subscriberId: string) {
+    return new August(config).deleteWebSocketSubscription(subscriberId)
   }
 
   // House methods

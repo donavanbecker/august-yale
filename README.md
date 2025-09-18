@@ -91,10 +91,13 @@ When creating a new `August` object, the configuration can be passed in as an ob
 | apiKey¹       | AUGUST_API_KEY¹    |
 | pnSubKey¹     | AUGUST_PN_SUB_KEY¹ |
 | countryCode²  | COUNTRY_CODE²      |
+| brand³        | -                  |
 
 > ¹ `apiKey` and `pnSubKey` are optional. This module uses August's unpublished API, and August has been known to occasionally recycle their client API keys. **Keys have been hard-coded into this module, but they may break at any time.** If you find a different key to use, pass it in here.
 
-> ² `countryCode` is also optional. Any value other than `US` will use a different set of default API URLs. These can still be overriden by `apiKey` and `pbSubKey`.
+> ² `countryCode` is also optional. Any value other than `US` will use a different set of default API URLs. These can still be overridden by `apiKey` and `pbSubKey`.
+
+> ³ `brand` is optional and can be one of: `august`, `yale_access`, `yale_home`, `yale_global`, `yale_august`. Defaults to `august`. Different brands support different features (doorbells, alarms, etc.).
 
 When using environment variables, you can simply call `new August()`. You can also choose to have some environment variables and some in the config object. Any property sent via the config object will override the respective environment variable.
 
@@ -106,7 +109,31 @@ August's API uses short-lived tokens (JWTs). This module attempts to relieve the
 
 ## API
 
-These methods are available on each object created from `August`. **All methods are asyncronous and should be properly awaited.** Unless otherwise specified, `undefined` will be returned if an error occurs. Check your error log for error message.
+These methods are available on each object created from `August`. **All methods are asynchronous and should be properly awaited.** Unless otherwise specified, `undefined` will be returned if an error occurs. Check your error log for error message.
+
+### Error Handling
+
+This module exports several custom error classes for better error handling:
+
+- `YaleApiError`: Base API error class
+- `InvalidAuth`: Authentication/authorization errors
+- `RateLimitError`: Rate limiting errors  
+- `BridgeError`: Bridge/device connectivity errors
+- `TimeoutError`: Request timeout errors
+
+```js
+import August, { InvalidAuth, BridgeError } from 'august-yale'
+
+try {
+  const locks = await august.locks()
+} catch (error) {
+  if (error instanceof InvalidAuth) {
+    console.error('Authentication failed:', error.message)
+  } else if (error instanceof BridgeError) {
+    console.error('Bridge offline:', error.message)
+  }
+}
+```
 
 ### Authorization
 
@@ -295,6 +322,106 @@ console.log(lockStatus)
 //   ...
 // }
 ```
+
+#### `unlatch([lockId])` → `object`
+
+Unlatch a lock (for locks that support this feature, like smart deadbolts with latch control).
+
+If no `lockId` is passed and there are multiple locks on the account, will throw error.
+
+Returns a **AugustLockStatus** object after successfully unlatching.
+
+### Additional Endpoints
+
+The following endpoints provide access to extended Yale/August ecosystem features:
+
+#### `houses()` → `object`
+
+Retrieve a list of all houses/locations on account.
+
+#### `houseDetails(houseId)` → `object`
+
+Retrieve details about a specific house/location.
+
+#### `houseActivities(houseId, [limit])` → `array`
+
+Retrieve activity/event history for a house. `limit` defaults to 8 events.
+
+#### `houseTemperature(houseId)` → `object`
+
+Retrieve temperature data for a house (if supported by devices).
+
+#### `user()` → `object`
+
+Retrieve user profile information.
+
+#### `doorbells()` → `object`
+
+Retrieve a list of all doorbells on account (for brands that support doorbells).
+
+#### `doorbellDetails(doorbellId)` → `object`
+
+Retrieve details about a specific doorbell.
+
+#### `wakeupDoorbell(doorbellId)` → `object`
+
+Wake up a doorbell for interaction.
+
+#### `alarms()` → `array`
+
+Retrieve a list of all alarms/security systems on account (for brands that support alarms).
+
+#### `alarmDevices(alarmId)` → `array`
+
+Retrieve devices associated with a specific alarm system.
+
+#### `setAlarmState(alarmId, armState, [areaIds])` → `object`
+
+Set alarm system state. `armState` can be 'arm_away', 'arm_stay', or 'disarm'. `areaIds` is optional array of area IDs.
+
+#### `pins(lockId)` → `array`
+
+Retrieve PIN codes configured for a lock.
+
+#### `capabilities(serialNumber)` → `object`
+
+Retrieve device capabilities for a specific device serial number.
+
+### Async Operations
+
+For better performance and reliability, these async operations queue commands and return immediately:
+
+#### `lockAsync(lockId, [hyperBridge])` → `string`
+
+Queue a lock operation asynchronously. Use PubNub or WebSocket subscription to get the result.
+
+#### `unlockAsync(lockId, [hyperBridge])` → `string`
+
+Queue an unlock operation asynchronously.
+
+#### `unlatchAsync(lockId, [hyperBridge])` → `string`
+
+Queue an unlatch operation asynchronously.
+
+#### `statusAsync(lockId, [hyperBridge])` → `string`
+
+Queue a status check asynchronously.
+
+### WebSocket Subscriptions
+
+For real-time updates:
+
+#### `addWebSocketSubscription()` → `object`
+
+Add a WebSocket subscription for real-time lock events.
+
+#### `getWebSocketSubscriptions([subscriberId])` → `object`
+
+Get WebSocket subscription details.
+
+#### `deleteWebSocketSubscription(subscriberId)` → `object`
+
+Remove a WebSocket subscription.
 
 ### Events
 
