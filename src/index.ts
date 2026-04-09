@@ -26,6 +26,8 @@ import session from './util/session.js'
 import setup from './util/setup.js'
 import { BASE_URLS, Brand } from './settings.js'
 
+import { TimeoutError } from './exceptions.js'
+
 // Export exceptions for external use
 export { BridgeError, InvalidAuth, RateLimitError, TimeoutError, YaleApiError } from './exceptions.js'
 export { Brand } from './settings.js'
@@ -62,7 +64,26 @@ class August {
     }
 
     // console.log('REQUEST', method, params)
-    const res = await tiny[method](params)
+    const timeoutMs: number = (this.config as any).timeout
+    const res = await new Promise<TinyResult>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new TimeoutError(`Request timed out after ${timeoutMs}ms`))
+      }, timeoutMs)
+      // Avoid keeping the Node.js event loop alive just for the timeout
+      if (timer.unref) {
+        timer.unref()
+      }
+      tiny[method](params).then(
+        (result: TinyResult) => {
+          clearTimeout(timer)
+          resolve(result)
+        },
+        (err: unknown) => {
+          clearTimeout(timer)
+          reject(err)
+        },
+      )
+    })
     // console.log('RESPONSE', res)
     return res
   }

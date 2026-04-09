@@ -17,6 +17,8 @@ const DEFAULT_PN_SUB_KEY_NON_US = 'sub-c-c9c38d4d-5796-46c9-9262-af20cf6a1d42'
  * @returns {object} config
  */
 
+const DEFAULT_TIMEOUT_MS = 30000
+
 export default function setup(config: any): object {
   const {
     AUGUST_API_KEY,
@@ -39,6 +41,7 @@ export default function setup(config: any): object {
   let idType // Auto-detected
   const augustId = config.augustId ?? AUGUST_ID
   const password = config.password ?? AUGUST_PASSWORD
+  const timeout = config.timeout ?? DEFAULT_TIMEOUT_MS
 
   if (!apiKey) {
     errors.push('Missing config.apiKey or AUGUST_API_KEY env var')
@@ -63,6 +66,6 @@ export default function setup(config: any): object {
   if (errors.length) {
     throw new ReferenceError(`Config errors found:\n${errors.join('\n')}`)
   } else {
-    return { apiKey, pnSubKey, installId, idType, augustId, password, countryCode }
+    return { apiKey, pnSubKey, installId, idType, augustId, password, countryCode, timeout }
   }
 }

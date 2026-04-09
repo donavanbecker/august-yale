@@ -10,6 +10,11 @@ export interface config {
   augustId?: string
   countryCode?: string
   brand?: string
+  /**
+   * Request timeout in milliseconds. Defaults to 30000 (30 seconds).
+   * API calls that exceed this duration will reject with a TimeoutError.
+   */
+  timeout?: number
 }
 
 export interface AugustLockStatus {
