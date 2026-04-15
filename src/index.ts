@@ -11,7 +11,7 @@ import details from './methods/details.js'
 import lockUnlock from './methods/lock-unlock.js'
 import locks from './methods/locks.js'
 import status from './methods/status.js'
-import subscribe from './methods/subscribe.js'
+import subscribe, { tearDownPubNub } from './methods/subscribe.js'
 import validate from './methods/validate.js'
 import unlatch from './methods/unlatch.js'
 import houses, { houseDetails, houseActivities, houseTemperature } from './methods/houses.js'
@@ -123,6 +123,22 @@ class August {
   end() {
     // End the session (called automatically in every method below except where noted)
     this.token = null
+  }
+
+  /**
+   * Fully tear down this August instance: clears the session token and
+   * destroys any PubNub subscription. Call this when you're done with
+   * the instance and want to release all resources (WebSocket connection,
+   * listeners, timers).
+   *
+   * Unlike end(), which is called internally after most API calls and
+   * only clears the HTTP auth token, destroy() also tears down the
+   * PubNub connection used by subscribe(). After destroy(), any active
+   * subscriptions on this instance are stopped.
+   */
+  destroy() {
+    this.token = null
+    tearDownPubNub(this)
   }
 
   /* ---------------------------------- Auth ---------------------------------- */
