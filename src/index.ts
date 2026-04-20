@@ -1,3 +1,5 @@
+import type { Response as UndiciResponse } from 'undici'
+
 import type { Brand } from './settings.js'
 import type { config } from './types.js'
 
@@ -87,7 +89,7 @@ class August {
       ? JSON.stringify(data)
       : undefined
 
-    let response: Response
+    let response: UndiciResponse
     try {
       response = await undiciFetch(url, {
         method: method.toUpperCase(),
@@ -97,7 +99,7 @@ class August {
         // underlying TCP connection, removing it from the scoped pool.
         signal: AbortSignal.timeout(timeoutMs),
         dispatcher: this.dispatcher,
-      }) as Response
+      }) as UndiciResponse
     } catch (e: unknown) {
       // AbortSignal.timeout() throws a DOMException with name 'TimeoutError'
       if (e instanceof DOMException && e.name === 'TimeoutError') {

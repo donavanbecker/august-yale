@@ -1,7 +1,7 @@
 {
   "name": "august-yale",
   "type": "module",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "API module for interacting with and receiving events from August smart locks",
   "author": {
     "name": "donavanbecker",
@@ -40,6 +40,7 @@
     "node": "^22 || ^24"
   },
   "scripts": {
+    "check": "npm install && npm outdated",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "build": "rm -rf dist && tsc",
@@ -57,12 +58,12 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^8.2.0",
-    "@types/node": "^24.12.2",
+    "@types/node": "^25.6.0",
     "@vitest/coverage-v8": "^4.1.4",
-    "eslint": "^9.39.4",
-    "eslint-plugin-format": "^1.5.0",
+    "eslint": "^10.2.1",
+    "eslint-plugin-format": "^2.0.1",
     "typedoc": "^0.28.19",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.4"
   }
 }
