@@ -17,15 +17,14 @@ export default antfu(
         'error',
         {
           groups: [
-            'builtin-type',
-            'external-type',
-            'internal-type',
-            ['parent-type', 'sibling-type', 'index-type'],
+            'type-builtin',
+            'type-external',
+            'type-internal',
+            ['type-parent', 'type-sibling', 'type-index'],
             'builtin',
             'external',
             'internal',
             ['parent', 'sibling', 'index'],
-            'object',
             'unknown',
           ],
           order: 'asc',
@@ -40,9 +39,9 @@ export default antfu(
       'test/no-only-tests': 'error',
       'unicorn/no-useless-spread': 'error',
       'unused-imports/no-unused-vars': ['error', { caughtErrors: 'none' }],
-      'no-new': 0, // Disable the no-new rule
-      'new-cap': 0, // Disable the new-cap rule
-      'no-undef': 0, // Disable the no-undef rule
+      'no-new': 0,
+      'new-cap': 0,
+      'no-undef': 0,
     },
   },
 )

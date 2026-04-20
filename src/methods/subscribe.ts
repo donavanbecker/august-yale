@@ -87,7 +87,7 @@ export default async function subscribe(
   if (!state) {
     const pubnub = new PubNub({
       subscribeKey: this.config.pnSubKey,
-      uuid: `pn-${this.config.augustId.toUpperCase()}`,
+      userId: `pn-${this.config.augustId.toUpperCase()}`,
     })
     state = {
       pubnub,

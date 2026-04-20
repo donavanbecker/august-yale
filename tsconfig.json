@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2023",
     "lib": [
       "DOM",
-      "ES2022"
+      "ES2023"
     ],
     "rootDir": "src",
     "module": "ES2022",
@@ -16,7 +16,8 @@
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
   "include": [
     "src"

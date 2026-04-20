@@ -1,31 +1,30 @@
+import type { Brand } from './settings.js'
 import type { config } from './types.js'
 
+import { TimeoutError } from './exceptions.js'
 /* Copyright(C) 2024, homebridge-plugins (https://github.com/homebridge-plugins). All rights reserved.
  *
  * index.ts: august-yale API registration.
  */
-
+import alarms, { alarmDevices, setAlarmState } from './methods/alarms.js'
+import lockAsync, { statusAsync, unlatchAsync, unlockAsync } from './methods/async-operations.js'
 import authorize from './methods/authorize.js'
+import capabilities from './methods/capabilities.js'
 import details from './methods/details.js'
+import doorbells, { doorbellDetails, wakeupDoorbell } from './methods/doorbells.js'
+import houses, { houseActivities, houseDetails, houseTemperature } from './methods/houses.js'
 import lockUnlock from './methods/lock-unlock.js'
 import locks from './methods/locks.js'
+import pins from './methods/pins.js'
 import status from './methods/status.js'
 import subscribe, { tearDownPubNub } from './methods/subscribe.js'
-import validate from './methods/validate.js'
 import unlatch from './methods/unlatch.js'
-import houses, { houseDetails, houseActivities, houseTemperature } from './methods/houses.js'
 import user from './methods/users.js'
-import doorbells, { doorbellDetails, wakeupDoorbell } from './methods/doorbells.js'
-import alarms, { alarmDevices, setAlarmState } from './methods/alarms.js'
-import pins from './methods/pins.js'
-import capabilities from './methods/capabilities.js'
+import validate from './methods/validate.js'
 import addWebSocketSubscription, { deleteWebSocketSubscription, getWebSocketSubscriptions } from './methods/websocket.js'
-import lockAsync, { statusAsync, unlatchAsync, unlockAsync } from './methods/async-operations.js'
+import { BASE_URLS } from './settings.js'
 import session from './util/session.js'
 import setup from './util/setup.js'
-import { BASE_URLS, Brand } from './settings.js'
-
-import { TimeoutError } from './exceptions.js'
 
 // Export exceptions for external use
 export { BridgeError, InvalidAuth, RateLimitError, TimeoutError, YaleApiError } from './exceptions.js'
@@ -412,11 +411,11 @@ class August {
     }
     if (doorState) {
       obj.state.open
-          = doorState === 'kAugDoorState_Open'
+        = doorState === 'kAugDoorState_Open'
           || doorState === 'kAugLockDoorState_Open'
           || doorState === 'open'
       obj.state.closed
-          = doorState === 'kAugDoorState_Closed'
+        = doorState === 'kAugDoorState_Closed'
           || doorState === 'kAugLockDoorState_Closed'
           || doorState === 'closed'
     }
