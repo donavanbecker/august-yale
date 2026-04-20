@@ -52,7 +52,8 @@
     "docs:lint": "typedoc --emit none --treatWarningsAsErrors"
   },
   "dependencies": {
-    "pubnub": "^10.2.9"
+    "pubnub": "^10.2.9",
+    "undici": "^8.1.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^8.2.0",
