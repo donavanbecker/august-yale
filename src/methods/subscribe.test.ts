@@ -5,7 +5,8 @@ const mockPubNubInstances: any[] = []
 
 vi.mock('pubnub', () => {
   return {
-    default: vi.fn().mockImplementation(() => {
+    // eslint-disable-next-line prefer-arrow-callback -- must be a function for `new` (vitest 4 requires constructable mocks)
+    default: vi.fn().mockImplementation(function () {
       const listeners: any[] = []
       const subscribedChannels = new Set<string>()
       const instance = {

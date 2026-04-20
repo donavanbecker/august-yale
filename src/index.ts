@@ -1,39 +1,46 @@
-import type { config, TinyOptions, TinyResult } from './types.js'
+import type { Brand } from './settings.js'
+import type { config } from './types.js'
 
+import { TimeoutError } from './exceptions.js'
 /* Copyright(C) 2024, homebridge-plugins (https://github.com/homebridge-plugins). All rights reserved.
  *
  * index.ts: august-yale API registration.
  */
-import tiny from 'tiny-json-http'
-
+import alarms, { alarmDevices, setAlarmState } from './methods/alarms.js'
+import lockAsync, { statusAsync, unlatchAsync, unlockAsync } from './methods/async-operations.js'
 import authorize from './methods/authorize.js'
+import capabilities from './methods/capabilities.js'
 import details from './methods/details.js'
+import doorbells, { doorbellDetails, wakeupDoorbell } from './methods/doorbells.js'
+import houses, { houseActivities, houseDetails, houseTemperature } from './methods/houses.js'
 import lockUnlock from './methods/lock-unlock.js'
 import locks from './methods/locks.js'
+import pins from './methods/pins.js'
 import status from './methods/status.js'
 import subscribe, { tearDownPubNub } from './methods/subscribe.js'
-import validate from './methods/validate.js'
 import unlatch from './methods/unlatch.js'
-import houses, { houseDetails, houseActivities, houseTemperature } from './methods/houses.js'
 import user from './methods/users.js'
-import doorbells, { doorbellDetails, wakeupDoorbell } from './methods/doorbells.js'
-import alarms, { alarmDevices, setAlarmState } from './methods/alarms.js'
-import pins from './methods/pins.js'
-import capabilities from './methods/capabilities.js'
+import validate from './methods/validate.js'
 import addWebSocketSubscription, { deleteWebSocketSubscription, getWebSocketSubscriptions } from './methods/websocket.js'
-import lockAsync, { statusAsync, unlatchAsync, unlockAsync } from './methods/async-operations.js'
+import { BASE_URLS } from './settings.js'
 import session from './util/session.js'
 import setup from './util/setup.js'
-import { BASE_URLS, Brand } from './settings.js'
-
-import { TimeoutError } from './exceptions.js'
 
 // Export exceptions for external use
 export { BridgeError, InvalidAuth, RateLimitError, TimeoutError, YaleApiError } from './exceptions.js'
 export { Brand } from './settings.js'
 
-interface FetchOptions extends TinyOptions {
-  method: keyof typeof tiny
+interface FetchOptions {
+  method: string
+  url: string
+  headers?: Record<string, string>
+  data?: unknown
+}
+
+/** Response shape — backward-compatible with the former tiny-json-http result */
+interface ApiResponse {
+  body: unknown
+  headers: Record<string, string>
 }
 
 class August {
@@ -43,49 +50,90 @@ class August {
     this.config = setup(config)
   }
 
-  async fetch({ method, ...params }: FetchOptions): Promise<TinyResult> {
+  async fetch({ method, url, headers, data }: FetchOptions): Promise<ApiResponse> {
     // Use brand-specific base URL if brand is specified
     let API_URL: string
     if (this.config.brand && BASE_URLS[this.config.brand as Brand]) {
       API_URL = BASE_URLS[this.config.brand as Brand]
     } else {
       // Fallback to country code based URL selection
-      API_URL = this.config.countryCode === 'US' 
-        ? 'https://api-production.august.com' 
+      API_URL = this.config.countryCode === 'US'
+        ? 'https://api-production.august.com'
         : 'https://api.aaecosystem.com'
     }
 
     // Ensure proper url
-    if (!params.url.startsWith(API_URL)) {
-      if (!params.url.startsWith('/')) {
-        params.url = `/${params.url}`
+    if (!url.startsWith(API_URL)) {
+      if (!url.startsWith('/')) {
+        url = `/${url}`
       }
-      params.url = API_URL + params.url
+      url = API_URL + url
     }
 
-    // console.log('REQUEST', method, params)
-    const timeoutMs: number = (this.config as any).timeout
-    const res = await new Promise<TinyResult>((resolve, reject) => {
-      const timer = setTimeout(() => {
-        reject(new TimeoutError(`Request timed out after ${timeoutMs}ms`))
-      }, timeoutMs)
-      // Avoid keeping the Node.js event loop alive just for the timeout
-      if (timer.unref) {
-        timer.unref()
+    const timeoutMs = this.config.timeout ?? 30000
+
+    const init: RequestInit = {
+      method: method.toUpperCase(),
+      headers: headers as HeadersInit,
+      // AbortSignal.timeout() both rejects the promise AND aborts the
+      // underlying TCP connection, removing it from any connection pool.
+      // This is the key improvement over the previous tiny-json-http approach
+      // where the timeout only rejected the wrapping promise while the dead
+      // socket stayed in Node's global agent pool, causing all subsequent
+      // requests to write into the void.
+      signal: AbortSignal.timeout(timeoutMs),
+    }
+
+    if (data !== null && data !== undefined) {
+      init.body = JSON.stringify(data)
+    }
+
+    let response: Response
+    try {
+      response = await fetch(url, init)
+    } catch (e: unknown) {
+      // AbortSignal.timeout() throws a DOMException with name 'TimeoutError'
+      if (e instanceof DOMException && e.name === 'TimeoutError') {
+        throw new TimeoutError(`Request timed out after ${timeoutMs}ms`)
       }
-      tiny[method](params).then(
-        (result: TinyResult) => {
-          clearTimeout(timer)
-          resolve(result)
-        },
-        (err: unknown) => {
-          clearTimeout(timer)
-          reject(err)
-        },
-      )
+      throw e
+    }
+
+    // Parse response body — handle empty responses gracefully
+    let body: unknown = null
+    const text = await response.text()
+    if (text.length > 0) {
+      try {
+        body = JSON.parse(text)
+      } catch {
+        body = text
+      }
+    }
+
+    // Convert Headers to a plain object for backward compatibility.
+    // session.ts accesses headers['x-august-access-token'] via bracket notation.
+    const responseHeaders: Record<string, string> = {}
+    response.headers.forEach((value, key) => {
+      responseHeaders[key] = value
     })
-    // console.log('RESPONSE', res)
-    return res
+
+    // Throw on HTTP errors (replicates tiny-json-http behavior).
+    // Include statusCode on the error for downstream detection in
+    // homebridge-august's isTimeoutError() and statusCode() methods.
+    if (!response.ok) {
+      let message = `${method.toUpperCase()} failed with: ${response.status}`
+      if (body && typeof body === 'object' && 'message' in body) {
+        message = (body as { message: string }).message
+      } else if (typeof body === 'string' && body.length < 200) {
+        message = body
+      }
+      const err = new Error(message) as Error & { statusCode: number, body: unknown }
+      err.statusCode = response.status
+      err.body = body
+      throw err
+    }
+
+    return { body, headers: responseHeaders }
   }
 
   /* --------------------------------- Session -------------------------------- */
@@ -363,11 +411,11 @@ class August {
     }
     if (doorState) {
       obj.state.open
-          = doorState === 'kAugDoorState_Open'
+        = doorState === 'kAugDoorState_Open'
           || doorState === 'kAugLockDoorState_Open'
           || doorState === 'open'
       obj.state.closed
-          = doorState === 'kAugDoorState_Closed'
+        = doorState === 'kAugDoorState_Closed'
           || doorState === 'kAugLockDoorState_Closed'
           || doorState === 'closed'
     }
