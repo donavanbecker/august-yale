@@ -1,9 +1,20 @@
 import type { config } from './types'
 
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { TimeoutError } from './exceptions'
-import August from './index'
+
+// Mock undici before importing August
+const mockFetch = vi.fn()
+vi.mock('undici', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('undici')>()
+  return {
+    ...actual,
+    fetch: mockFetch,
+  }
+})
+
+const { default: August } = await import('./index')
 
 describe('august', () => {
   const mockConfig: config = {
@@ -12,6 +23,10 @@ describe('august', () => {
     augustId: 'test@example.com',
     password: 'test-password',
   }
+
+  beforeEach(() => {
+    mockFetch.mockReset()
+  })
 
   it('should instantiate with config', () => {
     const august = new August(mockConfig)
@@ -38,9 +53,8 @@ describe('august', () => {
   it('should reject with TimeoutError when request exceeds timeout', async () => {
     const august = new August({ ...mockConfig, timeout: 50 })
 
-    // Mock global fetch to simulate a slow response that respects AbortSignal
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(
-      (_url, init) => new Promise<Response>((_resolve, reject) => {
+    mockFetch.mockImplementation(
+      (_url: string, init: any) => new Promise<Response>((_resolve, reject) => {
         if (init?.signal) {
           init.signal.addEventListener('abort', () => {
             reject(new DOMException('The operation was aborted.', 'TimeoutError'))
@@ -49,125 +63,110 @@ describe('august', () => {
       }),
     )
 
-    try {
-      await expect(
-        august.fetch({ method: 'get', url: 'https://api-production.august.com/locks' }),
-      ).rejects.toThrow(TimeoutError)
-    } finally {
-      fetchSpy.mockRestore()
-    }
+    await expect(
+      august.fetch({ method: 'get', url: 'https://api-production.august.com/locks' }),
+    ).rejects.toThrow(TimeoutError)
   })
 
   it('should parse JSON response body', async () => {
     const august = new August(mockConfig)
     const mockBody = { lockId: 'abc123', status: 'locked' }
 
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+    mockFetch.mockResolvedValue(
       new Response(JSON.stringify(mockBody), {
         status: 200,
         headers: { 'content-type': 'application/json' },
       }),
     )
 
-    try {
-      const result = await august.fetch({
-        method: 'get',
-        url: 'https://api-production.august.com/locks',
-      })
-      expect(result.body).toEqual(mockBody)
-    } finally {
-      fetchSpy.mockRestore()
-    }
+    const result = await august.fetch({
+      method: 'get',
+      url: 'https://api-production.august.com/locks',
+    })
+    expect(result.body).toEqual(mockBody)
   })
 
   it('should return headers as a plain object', async () => {
     const august = new August(mockConfig)
 
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+    mockFetch.mockResolvedValue(
       new Response('{}', {
         status: 200,
         headers: { 'x-august-access-token': 'test-token-123' },
       }),
     )
 
-    try {
-      const result = await august.fetch({
-        method: 'post',
-        url: 'https://api-production.august.com/session',
-      })
-      expect(result.headers['x-august-access-token']).toBe('test-token-123')
-    } finally {
-      fetchSpy.mockRestore()
-    }
+    const result = await august.fetch({
+      method: 'post',
+      url: 'https://api-production.august.com/session',
+    })
+    expect(result.headers['x-august-access-token']).toBe('test-token-123')
   })
 
   it('should throw with statusCode on HTTP errors', async () => {
     const august = new August(mockConfig)
 
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+    mockFetch.mockResolvedValue(
       new Response('Bad Gateway', { status: 502, statusText: 'Bad Gateway' }),
     )
 
-    try {
-      await expect(
-        august.fetch({ method: 'get', url: 'https://api-production.august.com/locks' }),
-      ).rejects.toMatchObject({ statusCode: 502 })
-    } finally {
-      fetchSpy.mockRestore()
-    }
+    await expect(
+      august.fetch({ method: 'get', url: 'https://api-production.august.com/locks' }),
+    ).rejects.toMatchObject({ statusCode: 502 })
   })
 
   it('should prepend base URL when path is relative', async () => {
     const august = new August(mockConfig)
 
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+    mockFetch.mockResolvedValue(
       new Response('{}', { status: 200 }),
     )
 
-    try {
-      await august.fetch({ method: 'get', url: '/locks' })
-      expect(fetchSpy).toHaveBeenCalledWith(
-        'https://api-production.august.com/locks',
-        expect.any(Object),
-      )
-    } finally {
-      fetchSpy.mockRestore()
-    }
+    await august.fetch({ method: 'get', url: '/locks' })
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api-production.august.com/locks',
+      expect.any(Object),
+    )
   })
 
   it('should use non-US base URL for non-US country codes', async () => {
     const august = new August({ ...mockConfig, countryCode: 'GB' })
 
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+    mockFetch.mockResolvedValue(
       new Response('{}', { status: 200 }),
     )
 
-    try {
-      await august.fetch({ method: 'get', url: '/locks' })
-      expect(fetchSpy).toHaveBeenCalledWith(
-        'https://api.aaecosystem.com/locks',
-        expect.any(Object),
-      )
-    } finally {
-      fetchSpy.mockRestore()
-    }
+    await august.fetch({ method: 'get', url: '/locks' })
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.aaecosystem.com/locks',
+      expect.any(Object),
+    )
   })
 
   it('should handle empty response body', async () => {
     const august = new August(mockConfig)
 
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+    mockFetch.mockResolvedValue(
       new Response('', { status: 200 }),
     )
 
-    try {
-      const result = await august.fetch({
-        method: 'put',
-        url: 'https://api-production.august.com/remoteoperate/lock123/lock',
-      })
-      expect(result.body).toBeNull()
-    } finally {
-      fetchSpy.mockRestore()
-    }
+    const result = await august.fetch({
+      method: 'put',
+      url: 'https://api-production.august.com/remoteoperate/lock123/lock',
+    })
+    expect(result.body).toBeNull()
+  })
+
+  it('should pass scoped dispatcher to fetch', async () => {
+    const august = new August(mockConfig)
+
+    mockFetch.mockResolvedValue(
+      new Response('{}', { status: 200 }),
+    )
+
+    await august.fetch({ method: 'get', url: '/locks' })
+    const callArgs = mockFetch.mock.calls[0][1]
+    expect(callArgs.dispatcher).toBeDefined()
+    expect(callArgs.dispatcher).not.toBe(undefined)
   })
 })

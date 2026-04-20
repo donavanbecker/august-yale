@@ -1,11 +1,13 @@
 import type { Brand } from './settings.js'
 import type { config } from './types.js'
 
-import { TimeoutError } from './exceptions.js'
 /* Copyright(C) 2024, homebridge-plugins (https://github.com/homebridge-plugins). All rights reserved.
  *
  * index.ts: august-yale API registration.
  */
+import { Agent, fetch as undiciFetch } from 'undici'
+
+import { TimeoutError } from './exceptions.js'
 import alarms, { alarmDevices, setAlarmState } from './methods/alarms.js'
 import lockAsync, { statusAsync, unlatchAsync, unlockAsync } from './methods/async-operations.js'
 import authorize from './methods/authorize.js'
@@ -46,8 +48,17 @@ interface ApiResponse {
 class August {
   config: config
   token: any
+  private dispatcher: Agent
   constructor(config: config) {
     this.config = setup(config)
+    // Each August instance owns its own connection pool.
+    // This prevents a corrupted global pool from permanently breaking
+    // all requests — if this instance's connections go bad, destroy()
+    // + new August() gives a completely fresh pool.
+    this.dispatcher = new Agent({
+      keepAliveTimeout: 30_000,
+      keepAliveMaxTimeout: 60_000,
+    })
   }
 
   async fetch({ method, url, headers, data }: FetchOptions): Promise<ApiResponse> {
@@ -72,25 +83,21 @@ class August {
 
     const timeoutMs = this.config.timeout ?? 30000
 
-    const init: RequestInit = {
-      method: method.toUpperCase(),
-      headers: headers as HeadersInit,
-      // AbortSignal.timeout() both rejects the promise AND aborts the
-      // underlying TCP connection, removing it from any connection pool.
-      // This is the key improvement over the previous tiny-json-http approach
-      // where the timeout only rejected the wrapping promise while the dead
-      // socket stayed in Node's global agent pool, causing all subsequent
-      // requests to write into the void.
-      signal: AbortSignal.timeout(timeoutMs),
-    }
-
-    if (data !== null && data !== undefined) {
-      init.body = JSON.stringify(data)
-    }
+    const requestBody = (data !== null && data !== undefined)
+      ? JSON.stringify(data)
+      : undefined
 
     let response: Response
     try {
-      response = await fetch(url, init)
+      response = await undiciFetch(url, {
+        method: method.toUpperCase(),
+        headers,
+        body: requestBody,
+        // AbortSignal.timeout() both rejects the promise AND aborts the
+        // underlying TCP connection, removing it from the scoped pool.
+        signal: AbortSignal.timeout(timeoutMs),
+        dispatcher: this.dispatcher,
+      }) as Response
     } catch (e: unknown) {
       // AbortSignal.timeout() throws a DOMException with name 'TimeoutError'
       if (e instanceof DOMException && e.name === 'TimeoutError') {
@@ -186,6 +193,7 @@ class August {
    */
   destroy() {
     this.token = null
+    this.dispatcher.close()
     tearDownPubNub(this)
   }
 
