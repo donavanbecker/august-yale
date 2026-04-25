@@ -21,7 +21,7 @@ import lockUnlock from './methods/lock-unlock.js'
 import locks from './methods/locks.js'
 import pins from './methods/pins.js'
 import status from './methods/status.js'
-import subscribe, { tearDownPubNub } from './methods/subscribe.js'
+import subscribe, { onPubNubStatus, tearDownPubNub } from './methods/subscribe.js'
 import unlatch from './methods/unlatch.js'
 import user from './methods/users.js'
 import validate from './methods/validate.js'
@@ -407,6 +407,24 @@ class August {
 
   async _subscribe(lockId: any, callback: any) {
     return subscribe.call(this, lockId, callback, true) // true keeps the session alive
+  }
+
+  /**
+   * Register a callback for PubNub status events. The callback receives
+   * the full PubNub status object — branch on `status.category` (e.g.
+   * `PNReconnectedCategory`, `PNNetworkDownCategory`).
+   *
+   * Returns an unsubscribe function. Safe to call before subscribe() —
+   * the listener will be wired to the PubNub instance the first time
+   * subscribe() creates it.
+   *
+   * Use case: connectivity-recovery detection. PubNub's WebSocket
+   * reconnects seconds before HTTP polling would notice that an
+   * outage has ended, so this is the fastest signal a homebridge
+   * plugin can use to decide it's safe to resume API calls.
+   */
+  onPubNubStatus(callback: (status: any) => void): () => void {
+    return onPubNubStatus(this, callback)
   }
 
   addSimpleProps(obj: { state?: any, lockID?: any, status?: any, doorState?: any, info?: any }) {

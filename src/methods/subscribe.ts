@@ -18,6 +18,47 @@ interface PubNubState {
 const instanceState = new WeakMap<object, PubNubState>()
 
 /**
+ * Per-August-instance PubNub status listeners. Separate from PubNubState
+ * because status listeners can be registered before subscribe() has
+ * created the PubNub instance — homebridge plugins typically want to
+ * react to PubNub reconnect events as a connectivity-recovery signal,
+ * which means hooking listeners up at platform-init time, not lock-by-lock.
+ *
+ * Stored in their own WeakMap keyed on the August instance so they
+ * survive across multiple subscribe() calls and clear automatically
+ * when the August instance is GC'd.
+ */
+const statusListeners = new WeakMap<object, Set<(status: any) => void>>()
+
+/**
+ * Register a callback for PubNub status events on this August instance.
+ *
+ * The callback receives the full PubNub status object; callers typically
+ * branch on `status.category` (e.g. `PNReconnectedCategory`,
+ * `PNNetworkDownCategory`). Returns an idempotent unsubscribe function.
+ *
+ * Safe to call before subscribe() has been invoked. The listener will
+ * be wired to the shared PubNub instance the first time subscribe()
+ * creates it.
+ */
+export function onPubNubStatus(august: object, cb: (status: any) => void): () => void {
+  let set = statusListeners.get(august)
+  if (!set) {
+    set = new Set()
+    statusListeners.set(august, set)
+  }
+  set.add(cb)
+  let unsubscribed = false
+  return () => {
+    if (unsubscribed) {
+      return
+    }
+    unsubscribed = true
+    statusListeners.get(august)?.delete(cb)
+  }
+}
+
+/**
  * Tear down the PubNub instance associated with this August instance.
  * Called when no subscriptions remain, or externally via cleanup paths.
  */
@@ -34,6 +75,7 @@ export function tearDownPubNub(august: object): void {
     // Best-effort cleanup; swallow any errors during teardown
   }
   instanceState.delete(august)
+  statusListeners.delete(august)
 }
 
 /**
@@ -117,6 +159,27 @@ export default async function subscribe(
         }
         for (const cb of callbacks) {
           cb(message, timetoken)
+        }
+      },
+      // PubNub status events. Dispatch to listeners registered via
+      // onPubNubStatus(). The full status object is passed through —
+      // consumers typically branch on `status.category` (e.g.
+      // PNConnectedCategory, PNReconnectedCategory, PNNetworkDownCategory).
+      // This is the fastest signal that the underlying network has
+      // recovered after a transient outage; the WebSocket reconnects
+      // seconds before HTTP polling would notice.
+      status: (status: any) => {
+        const listeners = statusListeners.get(this)
+        if (!listeners) {
+          return
+        }
+        for (const cb of listeners) {
+          try {
+            cb(status)
+          } catch {
+            // Best-effort: do not let one listener's exception block
+            // delivery to others.
+          }
         }
       },
     })
