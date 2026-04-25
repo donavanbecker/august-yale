@@ -31,6 +31,9 @@ vi.mock('pubnub', () => {
         _simulateMessage: (event: any) => {
           listeners.forEach(l => l.message?.(event))
         },
+        _simulateStatus: (status: any) => {
+          listeners.forEach(l => l.status?.(status))
+        },
       }
       mockPubNubInstances.push(instance)
       return instance
@@ -40,7 +43,7 @@ vi.mock('pubnub', () => {
 
 const subscribeModule = await import('./subscribe')
 const subscribe = subscribeModule.default
-const { tearDownPubNub } = subscribeModule
+const { tearDownPubNub, onPubNubStatus } = subscribeModule
 
 function makeFakeAugust(options: { lockIds?: string[], pubsubChannels?: Record<string, string> } = {}) {
   const lockIds = options.lockIds ?? ['lock-1']
@@ -277,5 +280,116 @@ describe('subscribe method - tearDownPubNub', () => {
     tearDownPubNub(august)
 
     expect(pn.destroy).toHaveBeenCalledOnce()
+  })
+})
+
+describe('onPubNubStatus', () => {
+  it('delivers status events to a listener registered AFTER subscribe()', async () => {
+    const august = makeFakeAugust()
+    await subscribe.call(august, 'lock-1', vi.fn(), false)
+    const pn = mockPubNubInstances[mockPubNubInstances.length - 1]
+
+    const listener = vi.fn()
+    onPubNubStatus(august, listener)
+
+    pn._simulateStatus({ category: 'PNReconnectedCategory' })
+    expect(listener).toHaveBeenCalledTimes(1)
+    expect(listener).toHaveBeenCalledWith({ category: 'PNReconnectedCategory' })
+  })
+
+  it('delivers status events to a listener registered BEFORE subscribe()', async () => {
+    // Use case from homebridge-august: register the listener at platform
+    // init time, before any lock has called subscribe(). The listener
+    // must still see events when subscribe() eventually creates the
+    // PubNub instance.
+    const august = makeFakeAugust()
+    const listener = vi.fn()
+    onPubNubStatus(august, listener)
+
+    await subscribe.call(august, 'lock-1', vi.fn(), false)
+    const pn = mockPubNubInstances[mockPubNubInstances.length - 1]
+    pn._simulateStatus({ category: 'PNConnectedCategory' })
+    expect(listener).toHaveBeenCalledTimes(1)
+  })
+
+  it('delivers events to all registered listeners', async () => {
+    const august = makeFakeAugust()
+    await subscribe.call(august, 'lock-1', vi.fn(), false)
+    const pn = mockPubNubInstances[mockPubNubInstances.length - 1]
+
+    const a = vi.fn()
+    const b = vi.fn()
+    onPubNubStatus(august, a)
+    onPubNubStatus(august, b)
+
+    pn._simulateStatus({ category: 'PNReconnectedCategory' })
+    expect(a).toHaveBeenCalledTimes(1)
+    expect(b).toHaveBeenCalledTimes(1)
+  })
+
+  it('returns an unsubscribe function that removes only that listener', async () => {
+    const august = makeFakeAugust()
+    await subscribe.call(august, 'lock-1', vi.fn(), false)
+    const pn = mockPubNubInstances[mockPubNubInstances.length - 1]
+
+    const a = vi.fn()
+    const b = vi.fn()
+    const unsubscribeA = onPubNubStatus(august, a)
+    onPubNubStatus(august, b)
+
+    unsubscribeA()
+    pn._simulateStatus({ category: 'PNReconnectedCategory' })
+
+    expect(a).not.toHaveBeenCalled()
+    expect(b).toHaveBeenCalledTimes(1)
+  })
+
+  it('unsubscribe is idempotent', async () => {
+    const august = makeFakeAugust()
+    await subscribe.call(august, 'lock-1', vi.fn(), false)
+    const pn = mockPubNubInstances[mockPubNubInstances.length - 1]
+
+    const a = vi.fn()
+    const unsubscribe = onPubNubStatus(august, a)
+    unsubscribe()
+    unsubscribe() // second call is a no-op
+
+    pn._simulateStatus({ category: 'PNReconnectedCategory' })
+    expect(a).not.toHaveBeenCalled()
+  })
+
+  it('a throwing listener does not block other listeners', async () => {
+    const august = makeFakeAugust()
+    await subscribe.call(august, 'lock-1', vi.fn(), false)
+    const pn = mockPubNubInstances[mockPubNubInstances.length - 1]
+
+    const good = vi.fn()
+    onPubNubStatus(august, () => { throw new Error('listener bug') })
+    onPubNubStatus(august, good)
+
+    expect(() => pn._simulateStatus({ category: 'PNReconnectedCategory' })).not.toThrow()
+    expect(good).toHaveBeenCalledTimes(1)
+  })
+
+  it('tearDownPubNub clears status listeners', async () => {
+    const august = makeFakeAugust()
+    await subscribe.call(august, 'lock-1', vi.fn(), false)
+    const pn = mockPubNubInstances[mockPubNubInstances.length - 1]
+
+    const a = vi.fn()
+    onPubNubStatus(august, a)
+    tearDownPubNub(august)
+
+    // The mock's _simulateStatus iterates the listener list pn carries;
+    // after tearDownPubNub, removeAllListeners() emptied pn._listeners,
+    // so the status callback won't be invoked anyway. But the contract
+    // we care about is: after teardown, even if a NEW pubnub instance
+    // is created (a fresh subscribe call), the previous listener must
+    // not still be wired up.
+    await subscribe.call(august, 'lock-1', vi.fn(), false)
+    const pn2 = mockPubNubInstances[mockPubNubInstances.length - 1]
+    expect(pn2).not.toBe(pn)
+    pn2._simulateStatus({ category: 'PNReconnectedCategory' })
+    expect(a).not.toHaveBeenCalled()
   })
 })
