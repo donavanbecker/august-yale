@@ -1,3 +1,12 @@
+## [1.1.8](https://github.com/homebridge-plugins/august-yale/compare/v1.1.7...v1.1.8) (2026-04-26)
+
+
+### Bug Fixes
+
+* support Node 20, undici 7 ([#42](https://github.com/homebridge-plugins/august-yale/issues/42)) ([874cb51](https://github.com/homebridge-plugins/august-yale/commit/874cb51dd598596d1908f299e67b711012cea6d1))
+
+
+
 # Changelog
 
 All notable changes to this project will be documented in this file. This project uses [Semantic Versioning](https://semver.org/)
