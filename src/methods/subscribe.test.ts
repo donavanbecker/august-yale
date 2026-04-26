@@ -364,7 +364,9 @@ describe('onPubNubStatus', () => {
     const pn = mockPubNubInstances[mockPubNubInstances.length - 1]
 
     const good = vi.fn()
-    onPubNubStatus(august, () => { throw new Error('listener bug') })
+    onPubNubStatus(august, () => {
+      throw new Error('listener bug')
+    })
     onPubNubStatus(august, good)
 
     expect(() => pn._simulateStatus({ category: 'PNReconnectedCategory' })).not.toThrow()
