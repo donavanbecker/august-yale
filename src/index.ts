@@ -27,11 +27,12 @@ import user from './methods/users.js'
 import validate from './methods/validate.js'
 import addWebSocketSubscription, { deleteWebSocketSubscription, getWebSocketSubscriptions } from './methods/websocket.js'
 import { BASE_URLS } from './settings.js'
+import { classifyTransportError } from './util/classify-error.js'
 import session from './util/session.js'
 import setup from './util/setup.js'
 
 // Export exceptions for external use
-export { BridgeError, InvalidAuth, RateLimitError, TimeoutError, YaleApiError } from './exceptions.js'
+export { AbortedError, BridgeError, InvalidAuth, NetworkError, RateLimitError, TimeoutError, YaleApiError } from './exceptions.js'
 export { Brand } from './settings.js'
 
 interface FetchOptions {
@@ -101,9 +102,21 @@ class August {
         dispatcher: this.dispatcher,
       }) as UndiciResponse
     } catch (e: unknown) {
-      // AbortSignal.timeout() throws a DOMException with name 'TimeoutError'
+      // AbortSignal.timeout() throws a DOMException with name 'TimeoutError'.
+      // We classify this as our own TimeoutError so consumers don't have
+      // to special-case DOMException semantics.
       if (e instanceof DOMException && e.name === 'TimeoutError') {
-        throw new TimeoutError(`Request timed out after ${timeoutMs}ms`)
+        throw new TimeoutError(`Request timed out after ${timeoutMs}ms`, e instanceof Error ? e : undefined)
+      }
+      // Classify other transport-level failures into NetworkError /
+      // TimeoutError / AbortedError. The original error is preserved on
+      // both `originalError` and `cause`, so consumers walking the cause
+      // chain continue to work. Programmer errors (InvalidArgumentError,
+      // etc.) and server-answered errors return null and bubble up
+      // unchanged.
+      const wrapped = classifyTransportError(e)
+      if (wrapped) {
+        throw wrapped
       }
       throw e
     }
