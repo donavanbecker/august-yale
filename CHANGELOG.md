@@ -1,3 +1,12 @@
+# [1.2.0](https://github.com/homebridge-plugins/august-yale/compare/v1.1.8...v1.2.0) (2026-04-29)
+
+
+### Features
+
+* typed transport-error wrapper (NetworkError, AbortedError) ([#43](https://github.com/homebridge-plugins/august-yale/issues/43)) ([748481a](https://github.com/homebridge-plugins/august-yale/commit/748481ae6e9867d3addaa601c905a408e57d875c))
+
+
+
 ## [1.1.8](https://github.com/homebridge-plugins/august-yale/compare/v1.1.7...v1.1.8) (2026-04-26)
 
 
