@@ -56,11 +56,49 @@ class August {
     this.config = setup(config)
     // Each August instance owns its own connection pool.
     // This prevents a corrupted global pool from permanently breaking
-    // all requests — if this instance's connections go bad, destroy()
-    // + new August() gives a completely fresh pool.
-    this.dispatcher = new Agent({
+    // all requests — if this instance's connections go bad,
+    // resetTransport() (or destroy() + new August()) gives a completely
+    // fresh pool.
+    this.dispatcher = new Agent(August.dispatcherOptions())
+  }
+
+  /**
+   * Default options for the per-instance undici Agent. Extracted as a
+   * static method so resetTransport() can rebuild the dispatcher with
+   * exactly the same configuration the constructor used.
+   */
+  private static dispatcherOptions() {
+    return {
       keepAliveTimeout: 30_000,
       keepAliveMaxTimeout: 60_000,
+    }
+  }
+
+  /**
+   * Throw away the current dispatcher and create a fresh one.
+   *
+   * Use case: connectivity recovery in long-lived consumers (e.g.
+   * homebridge plugins). After a network outage, the existing Agent
+   * may be holding stale half-open sockets that will fail-and-retry
+   * forever even after the network recovers. Calling resetTransport()
+   * gives the next request a clean connection pool without losing
+   * auth state, session token, or configuration — distinct from
+   * destroy() + new August() which discards everything.
+   *
+   * Idempotent. Safe to call from any state. Does not affect PubNub
+   * subscriptions (those use their own August instances created via
+   * August.subscribe()).
+   */
+  resetTransport(): void {
+    const old = this.dispatcher
+    this.dispatcher = new Agent(August.dispatcherOptions())
+    // Destroy the old dispatcher AFTER swapping the reference so any
+    // in-flight request that gets dispatched between these two lines
+    // lands on the new dispatcher rather than the about-to-be-destroyed
+    // old one.
+    old.destroy().catch(() => {
+      // Best effort; an error during destroy of an already-broken
+      // dispatcher is not actionable.
     })
   }
 

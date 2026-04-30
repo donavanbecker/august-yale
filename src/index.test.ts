@@ -169,4 +169,55 @@ describe('august', () => {
     expect(callArgs.dispatcher).toBeDefined()
     expect(callArgs.dispatcher).not.toBe(undefined)
   })
+
+  describe('resetTransport', () => {
+    it('replaces the dispatcher with a fresh one', async () => {
+      const august = new August(mockConfig)
+      // mockImplementation rather than mockResolvedValue so each call
+      // gets a fresh Response — the same instance can only be read once.
+      mockFetch.mockImplementation(async () => new Response('{}', { status: 200 }))
+
+      await august.fetch({ method: 'get', url: '/locks' })
+      const dispatcherBefore = mockFetch.mock.calls[0][1].dispatcher
+
+      august.resetTransport()
+
+      await august.fetch({ method: 'get', url: '/locks' })
+      const dispatcherAfter = mockFetch.mock.calls[1][1].dispatcher
+      expect(dispatcherAfter).not.toBe(dispatcherBefore)
+    })
+
+    it('preserves auth state (token is not cleared)', () => {
+      const august = new August(mockConfig)
+      // Set a token directly to simulate an authenticated state.
+      august.token = 'cached-session-token'
+
+      august.resetTransport()
+
+      // Critical: distinct from destroy(), which clears the token.
+      // The whole point of resetTransport is "shed transport state
+      // without re-authenticating."
+      expect(august.token).toBe('cached-session-token')
+    })
+
+    it('is safe to call multiple times', () => {
+      const august = new August(mockConfig)
+      expect(() => {
+        august.resetTransport()
+        august.resetTransport()
+        august.resetTransport()
+      }).not.toThrow()
+    })
+
+    it('does not throw if the old dispatcher is already broken', async () => {
+      // If the underlying Agent is in a bad state (the case
+      // resetTransport exists to handle), destroy() can reject. The
+      // method must swallow that error so callers can rely on it.
+      const august = new August(mockConfig)
+      const oldDispatcher: any = (august as any).dispatcher
+      oldDispatcher.destroy = () => Promise.reject(new Error('already broken'))
+
+      expect(() => august.resetTransport()).not.toThrow()
+    })
+  })
 })
