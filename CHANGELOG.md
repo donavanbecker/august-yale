@@ -1,3 +1,12 @@
+## [1.2.1](https://github.com/homebridge-plugins/august-yale/compare/v1.2.0...v1.2.1) (2026-04-30)
+
+
+### Features
+
+* add August.resetTransport() for connectivity recovery ([#44](https://github.com/homebridge-plugins/august-yale/issues/44)) ([e4ce788](https://github.com/homebridge-plugins/august-yale/commit/e4ce788dfcfbb68fc01d1f86c25eb35d0a0ed280))
+
+
+
 # [1.2.0](https://github.com/homebridge-plugins/august-yale/compare/v1.1.8...v1.2.0) (2026-04-29)
 
 
