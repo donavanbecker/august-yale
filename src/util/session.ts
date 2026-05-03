@@ -1,4 +1,7 @@
-let request: Promise<any> | null = null
+/**
+ * In-flight session requests, keyed on the August instance.
+ */
+const inflightSessionRequests = new WeakMap<object, Promise<any>>()
 
 /**
  * Start or continue a session
@@ -15,19 +18,32 @@ export default async function session(this: any): Promise<object> {
     'x-kease-api-key': apiKey,
     'Content-Type': 'application/json',
     'Accept-Version': '0.0.1',
-    'x-august-access-token': this.token || '', // Add this line
+    'x-august-access-token': this.token || '',
   }
 
   if (!this.token) {
     const identifier = `${idType}:${augustId}`
-
     const data = { installId, identifier, password }
 
-    if (request === null) {
-      request = this.fetch({ method: 'post', url: 'session', headers, data })
+    let inflight = inflightSessionRequests.get(this)
+    if (!inflight) {
+      inflight = this.fetch({ method: 'post', url: 'session', headers, data })
+      inflightSessionRequests.set(this, inflight!)
     }
-    const response = await request
-    request = null
+
+    let response: any
+    try {
+      response = await inflight
+    } finally {
+      // Clear the inflight entry whether the fetch resolved or rejected.
+      // A rejected promise must NOT stay cached — that was the bug being
+      // fixed here. Clearing in finally also handles cancellation, etc.
+      // Guard against the case where a parallel caller has already
+      // replaced the inflight entry: only delete if it's still ours.
+      if (inflightSessionRequests.get(this) === inflight) {
+        inflightSessionRequests.delete(this)
+      }
+    }
 
     this.token = response.headers['x-august-access-token']
     headers['x-august-access-token'] = this.token
