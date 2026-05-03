@@ -1,3 +1,12 @@
+## [1.2.2](https://github.com/homebridge-plugins/august-yale/compare/v1.2.1...v1.2.2) (2026-05-03)
+
+
+### Bug Fixes
+
+* **session:** rejected sessions no longer poison future calls ([#45](https://github.com/homebridge-plugins/august-yale/issues/45)) ([6c65b83](https://github.com/homebridge-plugins/august-yale/commit/6c65b83566efb254dca8ee82aecd9f2dad413352))
+
+
+
 ## [1.2.1](https://github.com/homebridge-plugins/august-yale/compare/v1.2.0...v1.2.1) (2026-04-30)
 
 
