@@ -42,6 +42,7 @@ export default function setup(config: any): object {
   const augustId = config.augustId ?? AUGUST_ID
   const password = config.password ?? AUGUST_PASSWORD
   const timeout = config.timeout ?? DEFAULT_TIMEOUT_MS
+  const brand = config.brand
 
   if (!apiKey) {
     errors.push('Missing config.apiKey or AUGUST_API_KEY env var')
@@ -66,6 +67,8 @@ export default function setup(config: any): object {
   if (errors.length) {
     throw new ReferenceError(`Config errors found:\n${errors.join('\n')}`)
   } else {
-    return { apiKey, pnSubKey, installId, idType, augustId, password, countryCode, timeout }
+    // brand must survive setup — index.ts picks the API base URL from it,
+    // so dropping it here silently sent every brand to the August servers
+    return { apiKey, pnSubKey, installId, idType, augustId, password, countryCode, timeout, brand }
   }
 }
