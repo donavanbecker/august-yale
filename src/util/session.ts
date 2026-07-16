@@ -1,3 +1,7 @@
+import type { Brand } from '../settings.js'
+
+import { BRANDING, DEFAULT_BRAND } from '../settings.js'
+
 /**
  * In-flight session requests, keyed on the August instance.
  */
@@ -11,13 +15,19 @@ const inflightSessionRequests = new WeakMap<object, Promise<any>>()
  * @returns {object} headers
  */
 export default async function session(this: any): Promise<object> {
-  const { apiKey, installId, password, idType, augustId } = this.config
+  const { apiKey, installId, password, idType, augustId, brand } = this.config
 
   const headers = {
     'x-august-api-key': apiKey,
     'x-kease-api-key': apiKey,
     'Content-Type': 'application/json',
     'Accept-Version': '0.0.1',
+    // The api rejects some calls (e.g. validate) with a 403 when the branding
+    // header doesn't match the account's ecosystem — yale-hosted accounts must
+    // announce themselves as 'yale' (mirrors yalexs' _api_headers)
+    'x-august-branding': BRANDING[brand as Brand] ?? BRANDING[DEFAULT_BRAND],
+    'User-Agent': 'August/Luna-22.17.0 (Android; SDK 31; gphone64_arm64)',
+    'x-august-country': 'US',
     'x-august-access-token': this.token || '',
   }
 
