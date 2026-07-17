@@ -2,7 +2,11 @@
  *
  * setup.ts: august-yale API registration.
  */
+import type { Brand } from '../settings.js'
+
 import process from 'node:process'
+
+import { API_KEYS, PUBNUB_TOKENS } from '../settings.js'
 
 const DEFAULT_API_KEY_US = '79fd0eb6-381d-4adf-95a0-47721289d1d9'
 const DEFAULT_API_KEY_NON_US = 'd9984f29-07a6-816e-e1c9-44ec9d1be431'
@@ -30,10 +34,15 @@ export default function setup(config: any): object {
   } = process.env
 
   const countryCode = config.countryCode || COUNTRY_CODE || 'US'
+  const brand = config.brand
   const errors: string[] = []
 
-  const DEFAULT_API_KEY = countryCode === 'US' ? DEFAULT_API_KEY_US : DEFAULT_API_KEY_NON_US
-  const DEFAULT_PN_SUB_KEY = countryCode === 'US' ? DEFAULT_PN_SUB_KEY_US : DEFAULT_PN_SUB_KEY_NON_US
+  // A brand-specific api key wins over the country-code defaults — the api
+  // rejects requests where the key doesn't match the announced branding
+  const DEFAULT_API_KEY = (brand && API_KEYS[brand as Brand])
+    ?? (countryCode === 'US' ? DEFAULT_API_KEY_US : DEFAULT_API_KEY_NON_US)
+  const DEFAULT_PN_SUB_KEY = (brand && PUBNUB_TOKENS[brand as Brand]?.subscribe)
+    || (countryCode === 'US' ? DEFAULT_PN_SUB_KEY_US : DEFAULT_PN_SUB_KEY_NON_US)
 
   const apiKey = config.apiKey ?? AUGUST_API_KEY ?? DEFAULT_API_KEY
   const pnSubKey = config.pnSubKey ?? AUGUST_PN_SUB_KEY ?? DEFAULT_PN_SUB_KEY
@@ -42,7 +51,6 @@ export default function setup(config: any): object {
   const augustId = config.augustId ?? AUGUST_ID
   const password = config.password ?? AUGUST_PASSWORD
   const timeout = config.timeout ?? DEFAULT_TIMEOUT_MS
-  const brand = config.brand
 
   if (!apiKey) {
     errors.push('Missing config.apiKey or AUGUST_API_KEY env var')
