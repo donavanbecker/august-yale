@@ -1,4 +1,31 @@
-## [1.2.2](https://github.com/homebridge-plugins/august-yale/compare/v1.2.1...v1.2.2) (2026-05-03)
+## [1.2.3](https://github.com/homebridge-plugins/august-yale/compare/v1.2.2...v1.2.3) (2026-07-18)
+
+
+
+## 1.2.3-beta.2 (2026-07-17)
+
+
+### Bug Fixes
+
+* **setup:** default the api key and pubnub key from the account brand ([fbd30a6](https://github.com/homebridge-plugins/august-yale/commit/fbd30a6e487497822c214ffbe21aa818d0f6f163))
+
+**Full Changelog**: https://github.com/homebridge-plugins/august-yale/compare/v1.2.3-beta.2...v1.2.3
+
+## 1.2.3-beta.1 (2026-07-16)
+
+
+### Bug Fixes
+
+* **session:** send the brand's branding header so yale-hosted accounts can validate ([314f117](https://github.com/homebridge-plugins/august-yale/commit/314f117c89ec99462f910737588b70a5d81eaea3))
+
+
+
+## 1.2.3-beta.0 (2026-07-16)
+
+
+### Bug Fixes
+
+* **setup:** keep the brand option so brand-specific api urls are actually used ([d41ddf7](htt## [1.2.2](https://github.com/homebridge-plugins/august-yale/compare/v1.2.1...v1.2.2) (2026-05-03)
 
 
 ### Bug Fixes
