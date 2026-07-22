@@ -68,9 +68,12 @@ export const CONFIGURATION_URLS: Record<Brand, string> = {
   [Brand.YALE_AUGUST]: 'https://account.august.com',
 }
 
-// API Keys from YaleXS library - these may need updating if they change
-export const API_KEYS: Record<Brand, string> = {
-  [Brand.AUGUST]: 'd9984f29-07a6-816e-e1c9-44ec9d1be431',
+// API Keys from YaleXS library - these may need updating if they change.
+// Brand.AUGUST is intentionally omitted: the August brand uses different keys per
+// region (US vs non-US), so it must fall through to the country-code defaults in
+// setup.ts. Pinning it to a single key here forced every August account onto the
+// non-US key, which August rejects for US accounts with "API key is not valid" (#238).
+export const API_KEYS: Partial<Record<Brand, string>> = {
   [Brand.YALE_ACCESS]: 'd9984f29-07a6-816e-e1c9-44ec9d1be431',
   [Brand.YALE_HOME]: '6e2a2093-6118-42c5-8a41-e1fd25dce7a1',
   [Brand.YALE_GLOBAL]: 'd16a1029-d823-4b55-a4ce-a769a9b56f0e',
