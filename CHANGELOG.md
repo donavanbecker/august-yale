@@ -1,3 +1,12 @@
+## [1.2.5](https://github.com/homebridge-plugins/august-yale/compare/v1.2.4...v1.2.5) (2026-07-22)
+
+
+### Bug Fixes
+
+* **setup:** fall back to the region default api key for august accounts instead of pinning the yale key, which August rejects for US accounts ([#238](https://github.com/homebridge-plugins/august-yale/issues/238)) ([2669093](https://github.com/homebridge-plugins/august-yale/commit/2669093a75fe0d073510e331ef1ed7466e11f933))
+
+
+
 ## [1.2.3](https://github.com/homebridge-plugins/august-yale/compare/v1.2.2...v1.2.3) (2026-07-18)
 
 

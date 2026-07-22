@@ -1,7 +1,7 @@
 {
   "name": "august-yale",
   "type": "module",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "description": "API module for interacting with and receiving events from August smart locks",
   "author": {
     "name": "donavanbecker",
