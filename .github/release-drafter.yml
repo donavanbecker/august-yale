@@ -1,31 +1,31 @@
-name-template: 'v$RESOLVED_VERSION'
-tag-template: 'v$RESOLVED_VERSION'
+name-template: v$RESOLVED_VERSION
+tag-template: v$RESOLVED_VERSION
 
 categories:
-  - title: 'Workflow Changes'
+  - title: Workflow Changes
     labels:
-      - 'workflow'
-  - title: 'Enhancements'
+      - workflow
+  - title: Enhancements
     labels:
-      - 'enhancement'
-  - title: 'Updated Dependencies'
+      - enhancement
+  - title: Updated Dependencies
     labels:
-      - 'dependencies'
-  - title: 'Documentation'
+      - dependencies
+  - title: Documentation
     labels:
-      - 'docs'
+      - docs
 
 change-template: '- $TITLE @$AUTHOR [#$NUMBER]'
 version-resolver:
   major:
     labels:
-      - 'major'
+      - major
   minor:
     labels:
-      - 'minor'
+      - minor
   patch:
     labels:
-      - 'patch'
+      - patch
   default: patch
 template: |
   ## Changes

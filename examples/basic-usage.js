@@ -1,4 +1,4 @@
-import August, { InvalidAuth, BridgeError, YaleApiError } from 'august-yale'
+import August, { BridgeError, InvalidAuth, YaleApiError } from 'august-yale'
 
 // Basic usage example
 async function basicExample() {
@@ -20,7 +20,7 @@ async function basicExample() {
 
     if (Object.keys(locks).length > 0) {
       const lockId = Object.keys(locks)[0]
-      
+
       // Get lock status
       const status = await august.status(lockId)
       console.log('Lock status:', status)
@@ -49,7 +49,7 @@ async function basicExample() {
 
     if (houses && Object.keys(houses).length > 0) {
       const houseId = Object.keys(houses)[0]
-      
+
       // Get house activities
       const activities = await august.houseActivities(houseId, 10)
       console.log('Recent activities:', activities)
@@ -58,7 +58,6 @@ async function basicExample() {
     // Get user profile
     const user = await august.user()
     console.log('User profile:', user)
-
   } catch (error) {
     if (error instanceof InvalidAuth) {
       console.error('Authentication failed. Please check credentials and reauthorize.')
@@ -76,7 +75,7 @@ async function basicExample() {
 async function asyncOperationsExample() {
   const august = new August({
     installId: 'your-install-id',
-    augustId: 'your-email@example.com', 
+    augustId: 'your-email@example.com',
     password: 'your-password',
   })
 
@@ -93,7 +92,6 @@ async function asyncOperationsExample() {
     // Set up WebSocket subscription for real-time updates
     const subscription = await august.addWebSocketSubscription()
     console.log('WebSocket subscription created:', subscription)
-
   } catch (error) {
     console.error('Error:', error)
   }
@@ -116,7 +114,7 @@ async function brandSpecificExample() {
 
     if (alarms && alarms.length > 0) {
       const alarmId = alarms[0].alarmID
-      
+
       // Get alarm devices
       const devices = await yaleHome.alarmDevices(alarmId)
       console.log('Alarm devices:', devices)
@@ -129,7 +127,6 @@ async function brandSpecificExample() {
     // Get doorbells (if supported)
     const doorbells = await yaleHome.doorbells()
     console.log('Doorbells:', doorbells)
-
   } catch (error) {
     console.error('Error:', error)
   }
@@ -139,12 +136,12 @@ async function brandSpecificExample() {
 if (import.meta.url === `file://${process.argv[1]}`) {
   console.log('Running basic example...')
   await basicExample()
-  
+
   console.log('\nRunning async operations example...')
   await asyncOperationsExample()
-  
+
   console.log('\nRunning brand-specific example...')
   await brandSpecificExample()
 }
 
-export { basicExample, asyncOperationsExample, brandSpecificExample }
+export { asyncOperationsExample, basicExample, brandSpecificExample }

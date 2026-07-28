@@ -4,11 +4,11 @@
 
 # August-Yale
 
-<a href="https://www.npmjs.com/package/august-yale"><img title="npm version" src="https://badgen.net/npm/v/august-yale?icon=npm&label" ></a>
-<a href="https://www.npmjs.com/package/august-yale"><img title="npm downloads" src="https://badgen.net/npm/dt/august-yale?label=downloads" ></a>
-<a href="https://discord.gg/8fpZA4S"><img title="discord-august-yale" src="https://badgen.net/discord/online-members/8fpZA4S?icon=discord&label=discord" ></a>
+<a href="https://www.npmjs.com/package/august-yale"><img alt="npm version" title="npm version" src="https://badgen.net/npm/v/august-yale?icon=npm&label" ></a>
+<a href="https://www.npmjs.com/package/august-yale"><img alt="npm downloads" title="npm downloads" src="https://badgen.net/npm/dt/august-yale?label=downloads" ></a>
+<a href="https://discord.gg/8fpZA4S"><img alt="discord-august-yale" title="discord-august-yale" src="https://badgen.net/discord/online-members/8fpZA4S?icon=discord&label=discord" ></a>
 
-<a href="https://paypal.me/donavanbecker"><img title="donavanbecker" src="https://badgen.net/badge/donavanbecker/paypal/yellow" ></a>
+<a href="https://paypal.me/donavanbecker"><img alt="donavanbecker" title="donavanbecker" src="https://badgen.net/badge/donavanbecker/paypal/yellow" ></a>
 
 <p>The <a href="https://august.com">August</a>-<a href="https://yale.com">Yale</a>
 library is a simple module for locking, unlocking, and getting the status of August smart locks connected via WiFi. You can also subscribe to lock events.</a>.
@@ -117,12 +117,12 @@ This module exports several custom error classes for better error handling:
 
 - `YaleApiError`: Base API error class
 - `InvalidAuth`: Authentication/authorization errors
-- `RateLimitError`: Rate limiting errors  
+- `RateLimitError`: Rate limiting errors
 - `BridgeError`: Bridge/device connectivity errors
 - `TimeoutError`: Request timeout errors
 
 ```js
-import August, { InvalidAuth, BridgeError } from 'august-yale'
+import August, { BridgeError, InvalidAuth } from 'august-yale'
 
 try {
   const locks = await august.locks()

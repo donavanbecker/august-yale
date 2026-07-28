@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - 'beta-*'
-      - 'beta'
-      - 'latest'
+      - beta
+      - latest
   workflow_dispatch:
     inputs:
       release_type:
@@ -66,7 +66,6 @@ jobs:
     needs: build_and_test
     uses: homebridge/.github/.github/workflows/eslint.yml@latest
 
-
   # ─── BETA RELEASE (branches starting with "beta") ────────────────────────────
 
   # 3️⃣ Publish beta to NPM (OIDC — id-token required here and in the reusable workflow)
@@ -77,10 +76,10 @@ jobs:
       id-token: write
     uses: homebridge/.github/.github/workflows/npm-publish-esm-oidc.yml@latest
     with:
-      tag: 'beta'
+      tag: beta
       dynamically_adjust_version: true
-      npm_version_command: 'pre'
-      pre_id: 'beta'
+      npm_version_command: pre
+      pre_id: beta
 
   # 4️⃣ Create GitHub pre-release
   beta-pre-release:
@@ -93,7 +92,6 @@ jobs:
         **Beta Release**
         **Version**: v${{ needs.beta-publish.outputs.NPM_VERSION }}
         [How To Test Beta Releases](https://github.com/homebridge-plugins/august-yale/wiki/Beta-Version)
-
 
   # ─── STABLE RELEASE (branch: "latest") ───────────────────────────────────────
 

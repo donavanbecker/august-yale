@@ -19,22 +19,26 @@ List last updated 12/15/24
 The following endpoints are implemented in this package:
 
 ### Session and Validation ✅
+
 - POST /session - `authorize()`
-- POST /validation/email - `authorize()`  
+- POST /validation/email - `authorize()`
 - POST /validation/phone - `authorize()`
 - POST /validate/email - `validate()`
 - POST /validate/phone - `validate()`
 
 ### Users ✅
+
 - GET /users/me - `user()`
 
 ### Houses ✅
+
 - GET /users/houses/mine - `houses()`
 - GET /houses/{houseID} - `houseDetails()`
 - GET /houses/{houseID}/activities - `houseActivities()`
 - GET /houses/{houseID}/temperature - `houseTemperature()`
 
 ### Locks ✅
+
 - GET /users/locks/mine - `locks()`
 - GET /locks/{lockID} - `details()`
 - GET /locks/{lockID}/status - `status()`
@@ -48,19 +52,23 @@ The following endpoints are implemented in this package:
 - PUT /remoteoperate/{lockID}/status?v=2.3.1&type=async&intent=wakeup - `statusAsync()`
 
 ### Doorbells ✅
+
 - GET /users/doorbells/mine - `doorbells()`
 - GET /doorbells/{doorbellID} - `doorbellDetails()`
 - PUT /doorbells/{doorbellID}/wakeup - `wakeupDoorbell()`
 
-### Alarms ✅ 
+### Alarms ✅
+
 - GET /users/alarms/mine - `alarms()`
 - GET /alarms/{alarmID}/devices - `alarmDevices()`
 - PUT /alarms/{alarmID}/state/{armState} - `setAlarmState()`
 
 ### Device Capabilities ✅
+
 - GET /devices/capabilities - `capabilities()`
 
 ### WebSocket Subscriptions ✅
+
 - POST /websocket/subscribers - `addWebSocketSubscription()`
 - GET /websocket/subscribers/{subscriberID} - `getWebSocketSubscriptions()`
 - DELETE /websocket/subscribers/{subscriberID} - `deleteWebSocketSubscription()`

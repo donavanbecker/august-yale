@@ -7,11 +7,13 @@ Always reference these instructions first and fallback to search or bash command
 ## Working Effectively
 
 ### Prerequisites
+
 - Requires Node.js version 20 or 22 (as specified in package.json engines)
 - Uses ES modules (package.json has "type": "module")
 - All builds and tests are extremely fast (under 5 seconds each)
 
 ### Bootstrap, Build, and Test
+
 Run these commands to get started:
 
 ```bash
@@ -38,6 +40,7 @@ npm run docs
 ```
 
 ### Development Workflow Commands
+
 ```bash
 # Clean build artifacts
 npm run clean
@@ -64,7 +67,9 @@ npm run watch
 ## Validation
 
 ### Always Run Before Committing
+
 ALWAYS run these validation steps before pushing changes:
+
 ```bash
 # Full validation sequence
 npm run lint && npm run build && npm test && npm run docs:lint
@@ -72,20 +77,23 @@ npm run lint && npm run build && npm test && npm run docs:lint
 ```
 
 ### Functional Testing Scenarios
+
 After making changes, validate the module works by testing:
 
-1. **Module Loading Test**: 
+1. **Module Loading Test**:
+
    ```bash
    node -e "const August = require('./dist/index.js'); console.log('✓ Module loads:', typeof August.default);"
    ```
 
 2. **Instance Creation Test**:
+
    ```bash
    node -e "
    const August = require('./dist/index.js').default;
    const august = new August({
-     installId: 'test-install', 
-     augustId: 'test@example.com', 
+     installId: 'test-install',
+     augustId: 'test@example.com',
      password: 'test-pass',
      countryCode: 'US'
    });
@@ -96,17 +104,20 @@ After making changes, validate the module works by testing:
 3. **API Methods Available Test**: Verify all expected methods exist on both static class and instance.
 
 ### CI Pipeline Requirements
+
 The GitHub Actions CI runs:
+
 - Node.js build and test workflow (from homebridge shared workflow)
 - ESLint workflow
-Ensure all validation steps pass locally before pushing.
+  Ensure all validation steps pass locally before pushing.
 
 ## Project Structure
 
 ### Key Directories and Files
+
 ```
 src/                     # Source TypeScript files
-├── index.ts            # Main August class and exports  
+├── index.ts            # Main August class and exports
 ├── types.ts            # TypeScript type definitions
 ├── settings.ts         # Configuration settings
 ├── methods/            # Individual API method implementations
@@ -127,12 +138,14 @@ docs/                   # Generated TypeDoc documentation
 ```
 
 ### Important Files to Check After Changes
+
 - Always review `src/index.ts` when modifying API surface
-- Check `src/types.ts` when adding new interfaces or types  
+- Check `src/types.ts` when adding new interfaces or types
 - Verify `src/util/setup.ts` when changing configuration handling
 - Update tests in corresponding `.test.ts` files for any method changes
 
 ### Configuration Files
+
 - `package.json` - Dependencies, scripts, Node.js version requirements
 - `tsconfig.json` - TypeScript compiler configuration
 - `eslint.config.js` - Linting rules (uses @antfu/eslint-config)
@@ -141,6 +154,7 @@ docs/                   # Generated TypeDoc documentation
 ## Common Development Tasks
 
 ### Adding New API Methods
+
 1. Create method file in `src/methods/[method-name].ts`
 2. Add corresponding test file `src/methods/[method-name].test.ts`
 3. Import and expose method in `src/index.ts`
@@ -149,6 +163,7 @@ docs/                   # Generated TypeDoc documentation
 6. Run full validation sequence
 
 ### Working with August API Integration
+
 - This library interacts with unpublished August APIs
 - API keys are hardcoded but may break if August changes them
 - Configuration supports both US and non-US API endpoints
@@ -156,6 +171,7 @@ docs/                   # Generated TypeDoc documentation
 - Real API calls require valid August credentials (not needed for development/testing)
 
 ### Debugging and Troubleshooting
+
 - Build failures: Check TypeScript errors with `npm run build`
 - Test failures: Run `npm test` for detailed output
 - Linting issues: Run `npm run lint:fix` to auto-fix most problems
@@ -163,9 +179,11 @@ docs/                   # Generated TypeDoc documentation
 - The library uses `tiny-json-http` for HTTP requests and `pubnub` for event subscriptions
 
 ### Performance Expectations
+
 All standard operations are extremely fast:
+
 - Fresh `npm install`: ~40 seconds
-- `npm run build`: ~3 seconds  
+- `npm run build`: ~3 seconds
 - `npm test`: ~1.4 seconds
 - `npm run lint`: ~2 seconds
 - `npm run docs`: ~2 seconds
@@ -174,7 +192,9 @@ All standard operations are extremely fast:
 NEVER CANCEL these commands - they complete very quickly, but set timeouts of 60+ seconds for safety.
 
 ## Library Usage Context
+
 This is a utility library, not a runnable application. It provides:
+
 - August class for creating authenticated connections
 - Methods for lock operations (lock, unlock, status, details)
 - Event subscription capabilities for real-time lock updates

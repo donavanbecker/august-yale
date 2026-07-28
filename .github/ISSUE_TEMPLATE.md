@@ -27,7 +27,7 @@ Show the logs here.
 
 **Rainbrid Config:**
 
-```json
+```
 Show your august-yale config.json here
 ```
 
@@ -36,9 +36,8 @@ Show your august-yale config.json here
 
 **Environment:**
 
-* **Node.js Version**: <!-- node -v -->
-* **August-Yale Version**:
-* **Operating System**: Raspbian / Ubuntu / Debian / Windows / macOS / Docker
-
+- **Node.js Version**: <!-- node -v -->
+- **August-Yale Version**:
+- **Operating System**: Raspbian / Ubuntu / Debian / Windows / macOS / Docker
 
 <!-- Click the "Preview" tab before you submit to ensure the formatting is correct. -->

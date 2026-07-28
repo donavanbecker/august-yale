@@ -18,9 +18,9 @@ function resolveFromLabels(labels) {
   const minorLabels = new Set(['minor', 'semver:minor', 'release:minor', 'feature'])
   const patchLabels = new Set(['patch', 'semver:patch', 'release:patch', 'fix'])
 
-  if (labels.some(label => majorLabels.has(label))) return 'major'
-  if (labels.some(label => minorLabels.has(label))) return 'minor'
-  if (labels.some(label => patchLabels.has(label))) return 'patch'
+  if (labels.some(label => majorLabels.has(label))) { return 'major' }
+  if (labels.some(label => minorLabels.has(label))) { return 'minor' }
+  if (labels.some(label => patchLabels.has(label))) { return 'patch' }
   return 'patch'
 }
 
@@ -33,8 +33,8 @@ function listPrsForCommit(owner, repo, sha, token) {
         method: 'GET',
         path,
         headers: {
-          Accept: 'application/vnd.github+json',
-          Authorization: `Bearer ${token}`,
+          'Accept': 'application/vnd.github+json',
+          'Authorization': `Bearer ${token}`,
           'User-Agent': 'homebridge-resolve-version-bump',
           'X-GitHub-Api-Version': '2022-11-28',
         },
@@ -91,7 +91,7 @@ async function main() {
 
   try {
     const prs = await listPrsForCommit(owner, repo, sha, token)
-    const pr = prs.find((candidate) => candidate.merged_at) || prs[0]
+    const pr = prs.find(candidate => candidate.merged_at) || prs[0]
 
     if (!pr) {
       console.error('No PR associated with commit; defaulting to patch.')
@@ -100,8 +100,8 @@ async function main() {
     }
 
     const labels = (pr.labels || [])
-      .map((label) => (typeof label === 'string' ? label : label.name || ''))
-      .map((label) => label.toLowerCase())
+      .map(label => (typeof label === 'string' ? label : label.name || ''))
+      .map(label => label.toLowerCase())
 
     const bump = resolveFromLabels(labels)
     console.error(`Resolved bump '${bump}' from PR #${pr.number} labels: ${labels.join(', ') || '(none)'}`)

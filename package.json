@@ -41,8 +41,8 @@
   },
   "scripts": {
     "check": "npm install && npm outdated",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "npm run lint -- --fix",
     "build": "rm -rf dist && tsc",
     "prepublishOnly": "npm run lint && npm run build && npm run docs && npm run docs:lint",
     "postpublish": "rm -rf dist && npm ci",
@@ -57,7 +57,7 @@
     "undici": "^8.7.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^9.1.0",
+    "@antfu/eslint-config": "^9.2.0",
     "@types/node": "^26.1.1",
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^10.7.0",

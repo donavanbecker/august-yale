@@ -1,6 +1,6 @@
 ### AugustLockBasic
 
-```js
+```
 {
   LockName: string,
   UserType: enum['superuser', ...],
@@ -12,7 +12,7 @@
 
 ### AugustLockDetailed
 
-```js
+```
 {
   LockName: string,
   Type: number,
@@ -95,7 +95,7 @@
 
 ### AugustLockStatus
 
-```js
+```
 {
   // From August
   status: enum['kAugLockState_Locked', 'kAugLockState_Unlocked', 'kAugLockState_Locking'],
@@ -138,7 +138,7 @@
 
 It is unknown why there are two different event formats.
 
-```js
+```
 {
   remoteEvent: 1,
   ...AugustLockStatus
@@ -147,7 +147,7 @@ It is unknown why there are two different event formats.
 
 OR
 
-```js
+```
 {
   // From August
   status: ['unlocked', 'locked'],
@@ -167,7 +167,7 @@ OR
 
 ### AugustUser
 
-```js
+```
 {
   UserType: enum['superuser', ...],
   FirstName: string,
@@ -178,7 +178,7 @@ OR
 
 ### AugustOfflineKey
 
-```js
+```
 {
   created: DateTimeISO,
   key: string,

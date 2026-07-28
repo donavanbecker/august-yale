@@ -16,7 +16,7 @@ function normalizeChangelogHeader(content) {
   const prependedEntries = content.slice(0, headerStart).trim()
   const remainingEntries = (nextSectionStart === -1 ? '' : content.slice(nextSectionStart)).trim()
 
-  return [headerBlock, prependedEntries, remainingEntries].filter(Boolean).join('\n\n') + '\n'
+  return `${[headerBlock, prependedEntries, remainingEntries].filter(Boolean).join('\n\n')}\n`
 }
 
 function getRepoUrl() {
@@ -24,7 +24,7 @@ function getRepoUrl() {
     const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
     let url = (typeof pkg.repository === 'string' ? pkg.repository : pkg.repository?.url) || ''
     url = url.replace(/^git\+/, '').replace(/\.git$/, '')
-    if (url.startsWith('https://')) return url
+    if (url.startsWith('https://')) { return url }
   } catch {}
   try {
     const remote = child_process.execSync('git remote get-url origin').toString().trim()
@@ -51,21 +51,21 @@ function appendFullChangelogLink(content, currentTag, repoUrl) {
   const prefix = `**Full Changelog**: ${repoUrl}/compare/`
   // Find the bounds of the first release section (the newly generated one)
   const firstSectionStart = content.indexOf('\n## ')
-  if (firstSectionStart === -1) return content
+  if (firstSectionStart === -1) { return content }
   const firstSectionEnd = content.indexOf('\n## ', firstSectionStart + 1)
   const firstSection = firstSectionEnd === -1 ? content.slice(firstSectionStart) : content.slice(firstSectionStart, firstSectionEnd)
 
   // Skip if a Full Changelog link is already present in that section
-  if (firstSection.includes(prefix)) return content
+  if (firstSection.includes(prefix)) { return content }
 
   const prevTag = getPreviousTag()
-  if (!prevTag) return content
+  if (!prevTag) { return content }
 
   const link = `**Full Changelog**: ${repoUrl}/compare/${prevTag}...${currentTag}`
   if (firstSectionEnd === -1) {
-    return content.trimEnd() + '\n\n' + link + '\n'
+    return `${content.trimEnd()}\n\n${link}\n`
   }
-  return content.slice(0, firstSectionEnd).trimEnd() + '\n\n' + link + '\n' + content.slice(firstSectionEnd)
+  return `${content.slice(0, firstSectionEnd).trimEnd()}\n\n${link}\n${content.slice(firstSectionEnd)}`
 }
 
 exports.preCommit = (props) => {
