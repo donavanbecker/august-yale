@@ -169,6 +169,9 @@ dist
 .yarn/build-state.yml
 .pnp.\*
 
+# gitHub actions
+.github
+
 # tests
 *.test.js
 *.test.ts
